@@ -9,7 +9,7 @@
 		
 		<!--[if lt IE 9]><script src="https://code.jquery.com/jquery-1.12.4.min.js"></script><![endif]--><!--[if gte IE 9]><!--><script src="https://code.jquery.com/jquery-3.3.1.min.js"></script><!--<![endif]-->
 		<script src="app.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="style.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="style.css?v=1" type="text/css" media="all" />
 		
 	</head>
 	<body>
@@ -17,11 +17,23 @@
 			<h1>4G Theoretical Speed Calculator</h1>
 		</div>
 		<div id="main">
-			<div id="blocks">Loading...</div>
-			<div id="carrier" class="big_sect">
-				<button id="add_carrier">Add carrier</button>
-			</div>
-			<div id="answer" class="big_sect">Loading...</div>
+			<div id="speeds">Loading...</div>
+			<table>
+				<thead>
+					<tr>
+						<th>Band</th>
+						<th>Bandwidth</th>
+						<th>Modulation</th>
+						<th>MiMo</th>
+					</tr>
+				</thead>
+				<tbody id="carriers">
+					<tr>
+						<td colspan="4"><h3>Loading...</h3></td>
+					</tr>
+				</tbody>
+			</table>
+			<div id="breakdown"></div>
 		</div>
 	</body>
 </html>
