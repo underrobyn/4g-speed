@@ -1,0 +1,19 @@
+{
+	"short_name":"4G Speeds",
+	"name":"4G Speed Calculator",
+	"icons":[
+		{
+			"src": "4g-96.png",
+			"type": "image/png",
+			"sizes": "96x96"
+		},
+		{
+			"src": "4g-192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		}
+	],
+	"start_url":"/4g-speed/",
+	"display":"standalone",
+	"orientation":"portrait"
+}

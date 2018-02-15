@@ -1,0 +1,97 @@
+body{
+	margin:0;
+	padding:0;
+	font-family:sans-serif;
+}
+select,button {
+	background:#1a1a1a;
+	color:#fff;
+	border:1.5px solid #ff7e22;
+	font-size:1.2em;
+	line-height:1.2em;
+	padding:5px;
+}
+select{
+	margin:.5% 5%;
+	width:90%;
+}
+button{
+	font-size:1.4em;
+	padding:.5em .75em;
+}
+h1,h2,h3 {
+	margin:0;
+	padding:0;
+	font-weight:100;
+}
+h1 {
+	line-height:2.1em;
+	font-size:2.1em;
+	color:#fff;
+}
+h2 {
+	font-size:1.7em;
+	text-decoration:underline;
+}
+h3 {
+	font-size:1.4em;
+}
+.sect {
+	width:25%;
+	float:left;
+	margin:.5% 0 1.5% 0;
+}
+.big_sect {
+	width:25%;
+	float:left;
+	text-align:center;
+	margin:.5% 0 1.5% 0;
+}
+#title_bar {
+	width:98.5%;
+	padding:0 0 0 1.5%;
+	height:4.2em;
+	background-color:rgba(0,0,0,0.95);
+	border-bottom:#ff7e22 2px solid;
+}
+#main {
+	padding:.75% 2%;
+}
+#answer{
+	font-size:2em;
+}
+@media screen and (max-width:1000px){
+	h3 {
+		font-size:1.3em;
+	}
+}
+@media screen and (max-width:960px){
+	.sect {
+		width:50%;
+	}
+	.big_sect {
+		width:100%;
+	}
+	h1 {
+		line-height:1.5em;
+		font-size:1.5em;
+	}
+	h2{
+		text-align:center;
+	}
+	h3 {
+		font-size:1.2em;
+	}
+	#answer{
+		font-size:1.6em;
+	}
+	#title_bar {
+		width:97%;
+		padding:0 0 0 3%;
+	}
+}
+@media screen and (max-width:680px){
+	.sect {
+		width:100%;
+	}
+}
