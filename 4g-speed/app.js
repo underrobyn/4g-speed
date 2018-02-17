@@ -6,19 +6,42 @@
 
 // Universal configurations
 var base = .5;						// Base number for multipliers
-var rbs = [6,15,25,50,75,100];		// Bandwidth Multiplier
+var bw = [1.4,3,5,10,15,20];		// Band widths (MHz)
+var gbp = [.23,.1,.1,.1,.1,.1];		// Guard band percent (Decimal %)
 var mod = [1,1.5,1.95]; 			// Modulation Multiplier
 var mimo = [1,2,4]; 				// MiMo Multiplier
 var carriers = 0;					// Number of LTE Carriers (CA)
 
 // TDD Specific Configurations
+var tddbase = .0005;
+var tcpl = 7; 		// This is Normal CP! Extended CP is rare in UK, value is 6 if you must know.
+var tldir = [1,3];
 var tconf = {
-	"0":[]
+	// tconf[CONFIG][D/S/U]
+	0:[2,2,6],
+	1:[4,2,4],
+	2:[6,2,2],
+	3:[6,1,3],
+	4:[7,1,2],
+	5:[8,1,1],
+	6:[3,2,5]
+};
+var ssubconf = {
+	// ssubconf[CONFIG][DwPTS/GP/UpPTS]
+	0:[3,8,1],
+	1:[8,3,1],
+	2:[9,2,1],
+	3:[10,1,1],
+	4:[3,7,2],
+	5:[8,2,2],
+	6:[9,1,2],
+	7:[0,0,0],
+	8:[0,0,0]
 };
 
 // Get LTE Link Type
 var checkType = function(band){
-	if (band == 32){
+	if (band == 32){ // Supplementary Downlink - Could also be used for uplink
 		return "SDL";
 	} else if (band >= 33 && band <= 48) {
 		return "TDD";
@@ -31,13 +54,25 @@ var sensibleRound = function(n){
 	return Math.round(n*100)/100;
 };
 
+var rb = function(sw){
+	// ( Bandwidth (Hz) - Guard % of Bandwidth (Hz) ) / Resource block size in frequency domain (Hz)
+	var rbs = Math.round(
+		(
+			bw[sw]*1000-(
+				bw[sw]*1000*gbp[sw]
+			)
+		)/180					
+	);
+	return rbs;
+};
+
 var tdd = function(sw,sm,si,tc,tf){
 	
 	return false;
 };
 
 var fdd = function(sw,sm,si){
-	return base * rbs[sw] * mod[sm] * mimo[si];
+	return base * rb(sw) * mod[sm] * mimo[si];
 };
 
 var doCalc = function(carrier){
@@ -55,7 +90,7 @@ var doCalc = function(carrier){
 	// Calculate result
 	if (ty === "TDD"){
 		
-		var ans = tdd(sw,sm,si);
+		var ans = tdd(sw,sm,si,tc,tf);
 		
 	} else if (ty === "FDD" || ty === "SDL"){
 		
@@ -96,6 +131,7 @@ var showTddOpts = function(e){
 };
 
 var addRow = function(){
+	
 	// Append new carrier
 	var block = $('<tr class="carrier_block" id="ca_id' + carriers + '">\
 		<td>\
