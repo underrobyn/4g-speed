@@ -44,6 +44,9 @@ th {
 tbody tr {
 	text-align:center;
 }
+td{
+	padding:1.5vh 0;
+}
 #title_bar {
 	width:98.5%;
 	padding:0 0 0 1.5%;

@@ -4,13 +4,19 @@
  *	https://github.com/jake-cryptic/4g-speed
 */
 
+// Universal configurations
 var base = .5;						// Base number for multipliers
 var rbs = [6,15,25,50,75,100];		// Bandwidth Multiplier
 var mod = [1,1.5,1.95]; 			// Modulation Multiplier
 var mimo = [1,2,4]; 				// MiMo Multiplier
-var carriers = 0;
+var carriers = 0;					// Number of LTE Carriers (CA)
 
-// Sneaky TDD bands
+// TDD Specific Configurations
+var tconf = {
+	"0":[]
+};
+
+// Get LTE Link Type
 var checkType = function(band){
 	if (band == 32){
 		return "SDL";
@@ -25,22 +31,44 @@ var sensibleRound = function(n){
 	return Math.round(n*100)/100;
 };
 
+var tdd = function(sw,sm,si,tc,tf){
+	
+	return false;
+};
+
+var fdd = function(sw,sm,si){
+	return base * rbs[sw] * mod[sm] * mimo[si];
+};
+
 var doCalc = function(carrier){
 	// Get information from elements
 	var sb = $("#ca_id" + carrier + " .sel_freq").val();
 	var sw = $("#ca_id" + carrier + " .sel_width").val();
 	var sm = $("#ca_id" + carrier + " .sel_modulation").val();
 	var si = $("#ca_id" + carrier + " .sel_inout").val();
+	var tc = $("#ca_id" + carrier + " .sel_tddconfig").val();
+	var tf = $("#ca_id" + carrier + " .sel_tddsframe").val();
+	
+	// Determine calculation type
+	var ty = checkType(sb);
 	
 	// Calculate result
-	var ans = base * rbs[sw] * mod[sm] * mimo[si];
-	
-	// If TDD error out
-	if (checkType(sb) === "TDD"){
-		return false;
+	if (ty === "TDD"){
+		
+		var ans = tdd(sw,sm,si);
+		
+	} else if (ty === "FDD" || ty === "SDL"){
+		
+		$("#tddoptblock" + carrier).hide();
+		var ans = fdd(sw,sm,si);
+		
+	} else {
+		
+		console.error("Unknown type:",ty);
+		
 	}
 	
-	var rounded = sensibleRound(ans);
+	var rounded = ans;//sensibleRound(ans);
 	
 	return rounded;
 };
@@ -59,11 +87,19 @@ var overallCalc = function(){
 	$("#speeds").html(sensibleRound(total) + "Mbps");
 };
 
+var showTddOpts = function(e){
+	if (checkType($("#ca_id" + $(this).data("carrier") + " .sel_freq").val()) === "TDD"){
+		$("#tddoptblock" + $(this).data("carrier")).show();
+	} else {
+		$("#tddoptblock" + $(this).data("carrier")).hide();
+	}
+};
+
 var addRow = function(){
 	// Append new carrier
 	var block = $('<tr class="carrier_block" id="ca_id' + carriers + '">\
 		<td>\
-			<select class="sel_freq">\
+			<select class="sel_freq" data-carrier="' + carriers + '">\
 				<option value="1">B1 | FDD (2100MHz)</option>\
 				<option value="2">B2&nbsp;&nbsp; | FDD (1900MHz)</option>\
 				<option value="3">B3&nbsp;&nbsp; | FDD (1800MHz)</option>\
@@ -115,6 +151,32 @@ var addRow = function(){
 				<option value="70">B70 | FDD (2000MHz)</option>\
 				<option value="71">B71 | FDD (600MHz)</option>\
 			</select>\
+			<div id="tddoptblock' + carriers + '" class="tdd_config" style="display:none;">\
+				<br />\
+				<label for="tdd_conf' + carriers + '">TDD Configuration</label>\
+				<select class="sel_tddconfig" id="tdd_conf' + carriers + '">\
+					<option value="0">Configuration 0</option>\
+					<option value="1">Configuration 1</option>\
+					<option value="2">Configuration 2</option>\
+					<option value="3">Configuration 3</option>\
+					<option value="4">Configuration 4</option>\
+					<option value="5">Configuration 5</option>\
+					<option value="6">Configuration 6</option>\
+				</select>\
+				<br />\
+				<label for="tdd_subf' + carriers + '">Special Subframe Configuration</label>\
+				<select class="sel_tddsframe" id="tdd_subf' + carriers + '">\
+					<option value="0">Configuration 0</option>\
+					<option value="1">Configuration 1</option>\
+					<option value="2">Configuration 2</option>\
+					<option value="3">Configuration 3</option>\
+					<option value="4">Configuration 4</option>\
+					<option value="5">Configuration 5</option>\
+					<option value="6">Configuration 6</option>\
+					<option value="7">Configuration 7</option>\
+					<option value="8">Configuration 8</option>\
+				</select>\
+			</div>\
 		</td>\
 		<td>\
 			<select class="sel_width">\
@@ -149,6 +211,7 @@ var addRow = function(){
 	}
 	
 	$("#ca_id" + carriers + " select").on("change",overallCalc);
+	$("#ca_id" + carriers + " .sel_freq").on("change",showTddOpts);
 	
 	carriers++;
 	overallCalc();
