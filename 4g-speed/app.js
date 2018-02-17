@@ -14,8 +14,17 @@ var carriers = 0;					// Number of LTE Carriers (CA)
 
 // TDD Specific Configurations
 var tddbase = .0005;
-var tcpl = 7; 		// This is Normal CP! Extended CP is rare in UK, value is 6 if you must know.
-var tldir = [1,3];
+// Extended CP rarely used in UK
+var tcpl = {
+	"normal":7,
+	"extended":6
+};
+var tldir = {
+	"D":0,
+	"U":2
+};
+var tddmod = [4,6,8];
+var tscprb = 12;	// Sub carriers per resource block
 var tconf = {
 	// tconf[CONFIG][D/S/U]
 	0:[2,2,6],
@@ -27,16 +36,30 @@ var tconf = {
 	6:[3,2,5]
 };
 var ssubconf = {
-	// ssubconf[CONFIG][DwPTS/GP/UpPTS]
-	0:[3,8,1],
-	1:[8,3,1],
-	2:[9,2,1],
-	3:[10,1,1],
-	4:[3,7,2],
-	5:[8,2,2],
-	6:[9,1,2],
-	7:[0,0,0],
-	8:[0,0,0]
+	"normal":{
+		// ssubconf[CONFIG][DwPTS/GP/UpPTS]
+		0:[3,10,1],
+		1:[9,4,1],
+		2:[10,3,1],
+		3:[11,2,1],
+		4:[12,1,1],
+		5:[3,9,2],
+		6:[9,3,2],
+		7:[10,2,2],
+		8:[11,1,2]
+	},
+	"extended":{
+		// ssubconf[CONFIG][DwPTS/GP/UpPTS]
+		0:[3,8,1],
+		1:[8,3,1],
+		2:[9,2,1],
+		3:[10,1,1],
+		4:[3,7,2],
+		5:[8,2,2],
+		6:[9,1,2],
+		7:[0,0,0],
+		8:[0,0,0]
+	}
 };
 
 // Get LTE Link Type
@@ -66,9 +89,48 @@ var rb = function(sw){
 	return rbs;
 };
 
-var tdd = function(sw,sm,si,tc,tf){
+var tdd = function(sw,sm,si,tc,tf,cp){
+	var dir = ["D",0];
+	var consider = dir[1];
 	
-	return false;
+	// TDD Sect 1
+	var symps = tcpl[cp];						// # of OFDM symbols per slot of 0.5ms [symbols]
+	var sympsfo = symps/tddbase/1000			// # of OFDM symbols per subframe of 1ms [symbols]
+	var sympsft = sympsfo*10					// # of OFDM symbols per frame of 10ms [symbols]
+	console.log(sympsfo);
+	
+	// TDD Sect 2
+	var linkoff = tldir[dir[0]];				// TDD Link Direction offset Download|Upload
+	
+	// TDD Configuration Section
+	var tddsconf = tconf[tc];					// TDD Selected Config
+	var frames = tddsconf[consider];
+	var sect1t = frames*sympsfo;
+	
+	// TDD Special Configuration Section
+	var ssubsconf = ssubconf[cp][tf];			// TDD Special Selected Config
+	var sframes = ssubsconf[consider];
+	var sect2t = sframes*tddsconf[1];			// Consider special frames
+	
+	// TDD Total config
+	var totalc = sect1t + sect2t;
+	
+	// Throughput per sub carrier
+	var dltpsc = (totalc*100*tddmod[sm]/1000);
+	
+	// Sub carriers per RB
+	var scprb = dltpsc*(tscprb/1000);
+	
+	// Rbs * Throughput per Rbs
+	var tpea = rb(sw)*scprb;
+	
+	var atm = tpea * mimo[si];
+	
+	// Take off 25% 
+	var ctrl = atm * .25;
+	var fin = atm*1-ctrl;
+	
+	return fin;
 };
 
 var fdd = function(sw,sm,si){
@@ -90,7 +152,7 @@ var doCalc = function(carrier){
 	// Calculate result
 	if (ty === "TDD"){
 		
-		var ans = tdd(sw,sm,si,tc,tf);
+		var ans = tdd(sw,sm,si,tc,tf,"normal");
 		
 	} else if (ty === "FDD" || ty === "SDL"){
 		
