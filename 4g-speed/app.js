@@ -89,15 +89,14 @@ var rb = function(sw){
 	return rbs;
 };
 
-var tdd = function(sw,sm,si,tc,tf,cp){
+var tdd = function(sw,sm,si,tc,tf,tl){
 	var dir = ["D",0];
 	var consider = dir[1];
 	
 	// TDD Sect 1
-	var symps = tcpl[cp];							// # of OFDM symbols per slot of 0.5ms [symbols]
+	var symps = tcpl[tl];							// # of OFDM symbols per slot of 0.5ms [symbols]
 	var sympsfo = symps/tddbase/1000				// # of OFDM symbols per subframe of 1ms [symbols]
 	var sympsft = sympsfo*10						// # of OFDM symbols per frame of 10ms [symbols]
-	console.log(sympsfo);
 	
 	// TDD Sect 2
 	var linkoff = tldir[dir[0]];					// TDD Link Direction offset Download|Upload
@@ -108,7 +107,7 @@ var tdd = function(sw,sm,si,tc,tf,cp){
 	var sect1t = frames*sympsfo;
 	
 	// TDD Special Configuration Section
-	var ssubsconf = ssubconf[cp][tf];				// TDD Special Selected Config
+	var ssubsconf = ssubconf[tl][tf];				// TDD Special Selected Config
 	var sframes = ssubsconf[consider];
 	var sect2t = sframes*tddsconf[1];				// Consider special frames
 	
@@ -144,6 +143,7 @@ var doCalc = function(carrier){
 	var sw = $("#ca_id" + carrier + " .sel_width").val();
 	var sm = $("#ca_id" + carrier + " .sel_modulation").val();
 	var si = $("#ca_id" + carrier + " .sel_inout").val();
+	var tl = $("#ca_id" + carrier + " .sel_tddcpl").val();
 	var tc = $("#ca_id" + carrier + " .sel_tddconfig").val();
 	var tf = $("#ca_id" + carrier + " .sel_tddsframe").val();
 	
@@ -153,7 +153,7 @@ var doCalc = function(carrier){
 	// Calculate result
 	if (ty === "TDD"){
 		
-		var ans = tdd(sw,sm,si,tc,tf,"normal");
+		var ans = tdd(sw,sm,si,tc,tf,tl);
 		
 	} else if (ty === "FDD" || ty === "SDL"){
 		
@@ -186,7 +186,9 @@ var overallCalc = function(){
 var showTddOpts = function(e){
 	if (checkType($("#ca_id" + $(this).data("carrier") + " .sel_freq").val()) === "TDD"){
 		$("#tddoptblock" + $(this).data("carrier")).show();
+		$(".tdditm").show();
 	} else {
+		$(".tdditm").hide();
 		$("#tddoptblock" + $(this).data("carrier")).hide();
 	}
 };
@@ -249,6 +251,11 @@ var addRow = function(){
 				<option value="71">B71 | FDD (600MHz)</option>\
 			</select>\
 			<div id="tddoptblock' + carriers + '" class="tdd_config" style="display:none;">\
+				<label for="tdd_cpl' + carriers + '">Cyclic Prefix Length</label>\
+				<select class="sel_tddcpl" id="tdd_cpl' + carriers + '">\
+					<option value="normal">Normal CP (6)</option>\
+					<option value="extended">Extended CP (7)</option>\
+				</select>\
 				<br />\
 				<label for="tdd_conf' + carriers + '">TDD Configuration</label>\
 				<select class="sel_tddconfig" id="tdd_conf' + carriers + '">\

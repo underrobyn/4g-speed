@@ -38,6 +38,9 @@ table {
 	width:100%;
 	border-collapse:collapse;
 }
+thead{
+	box-shadow:#fff 0px 2px 0px;
+}
 th {
 	font-size:1.6em;
 }
@@ -77,6 +80,9 @@ td{
 #add_carrier:hover{
 	background-color:#c4c4c4;
 	color:#000;
+}
+.tdditm{
+	display:none;
 }
 @media screen and (max-width:1000px){
 	h3,th {
