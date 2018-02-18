@@ -5,12 +5,12 @@
 */
 
 // Universal configurations
-var base = .5;						// Base number for multipliers
-var bw = [1.4,3,5,10,15,20];		// Band widths (MHz)
-var gbp = [.23,.1,.1,.1,.1,.1];		// Guard band percent (Decimal %)
-var mod = [1,1.5,1.95]; 			// Modulation Multiplier
-var mimo = [1,2,4]; 				// MiMo Multiplier
-var carriers = 0;					// Number of LTE Carriers (CA)
+var base = .5;							// Base number for multipliers
+var bw = [1.4,3,5,10,15,20];			// Band widths (MHz)
+var gbp = [.23,.1,.1,.1,.1,.1];			// Guard band percent (Decimal %)
+var mod = [1,1.5,1.95]; 				// Modulation Multiplier
+var mimo = [1,2,4]; 					// MiMo Multiplier
+var carriers = 0;						// Number of LTE Carriers (CA)
 
 // TDD Specific Configurations
 var tddbase = .0005;
@@ -24,7 +24,7 @@ var tldir = {
 	"U":2
 };
 var tddmod = [4,6,8];
-var tscprb = 12;	// Sub carriers per resource block
+var tscprb = 12;							// Sub carriers per resource block
 var tconf = {
 	// tconf[CONFIG][D/S/U]
 	0:[2,2,6],
@@ -94,23 +94,23 @@ var tdd = function(sw,sm,si,tc,tf,cp){
 	var consider = dir[1];
 	
 	// TDD Sect 1
-	var symps = tcpl[cp];						// # of OFDM symbols per slot of 0.5ms [symbols]
-	var sympsfo = symps/tddbase/1000			// # of OFDM symbols per subframe of 1ms [symbols]
-	var sympsft = sympsfo*10					// # of OFDM symbols per frame of 10ms [symbols]
+	var symps = tcpl[cp];							// # of OFDM symbols per slot of 0.5ms [symbols]
+	var sympsfo = symps/tddbase/1000				// # of OFDM symbols per subframe of 1ms [symbols]
+	var sympsft = sympsfo*10						// # of OFDM symbols per frame of 10ms [symbols]
 	console.log(sympsfo);
 	
 	// TDD Sect 2
-	var linkoff = tldir[dir[0]];				// TDD Link Direction offset Download|Upload
+	var linkoff = tldir[dir[0]];					// TDD Link Direction offset Download|Upload
 	
 	// TDD Configuration Section
-	var tddsconf = tconf[tc];					// TDD Selected Config
+	var tddsconf = tconf[tc];						// TDD Selected Config
 	var frames = tddsconf[consider];
 	var sect1t = frames*sympsfo;
 	
 	// TDD Special Configuration Section
-	var ssubsconf = ssubconf[cp][tf];			// TDD Special Selected Config
+	var ssubsconf = ssubconf[cp][tf];				// TDD Special Selected Config
 	var sframes = ssubsconf[consider];
-	var sect2t = sframes*tddsconf[1];			// Consider special frames
+	var sect2t = sframes*tddsconf[1];				// Consider special frames
 	
 	// TDD Total config
 	var totalc = sect1t + sect2t;
@@ -121,14 +121,15 @@ var tdd = function(sw,sm,si,tc,tf,cp){
 	// Sub carriers per RB
 	var scprb = dltpsc*(tscprb/1000);
 	
-	// Rbs * Throughput per Rbs
+	// Rbs * Throughput per RBs
 	var tpea = rb(sw)*scprb;
 	
+	// MiMo multipliers
 	var atm = tpea * mimo[si];
 	
-	// Take off 25% 
+	// Take off 25% to account for RBs used in control channel
 	var ctrl = atm * .25;
-	var fin = atm*1-ctrl;
+	var fin = atm-ctrl;
 	
 	return fin;
 };
@@ -156,7 +157,6 @@ var doCalc = function(carrier){
 		
 	} else if (ty === "FDD" || ty === "SDL"){
 		
-		$("#tddoptblock" + carrier).hide();
 		var ans = fdd(sw,sm,si);
 		
 	} else {
@@ -165,7 +165,7 @@ var doCalc = function(carrier){
 		
 	}
 	
-	var rounded = ans;//sensibleRound(ans);
+	var rounded = sensibleRound(ans);
 	
 	return rounded;
 };
@@ -174,9 +174,8 @@ var overallCalc = function(){
 	var total = 0;
 	for (var i = 0; i < carriers; i++){
 		var x = doCalc(i);
-		console.log(x);
-		if (x === false){
-			$("#speeds").html("No TDD Support Yet");
+		if (isNaN(x)){
+			$("#speeds").html("There was an error");
 			return;
 		}
 		total = total + x;
@@ -253,26 +252,26 @@ var addRow = function(){
 				<br />\
 				<label for="tdd_conf' + carriers + '">TDD Configuration</label>\
 				<select class="sel_tddconfig" id="tdd_conf' + carriers + '">\
-					<option value="0">Configuration 0</option>\
-					<option value="1">Configuration 1</option>\
-					<option value="2">Configuration 2</option>\
-					<option value="3">Configuration 3</option>\
-					<option value="4">Configuration 4</option>\
-					<option value="5">Configuration 5</option>\
-					<option value="6">Configuration 6</option>\
+					<option value="0">TDD Config 0</option>\
+					<option value="1">TDD Config 1</option>\
+					<option value="2">TDD Config 2</option>\
+					<option value="3">TDD Config 3</option>\
+					<option value="4">TDD Config 4</option>\
+					<option value="5">TDD Config 5</option>\
+					<option value="6">TDD Config 6</option>\
 				</select>\
 				<br />\
 				<label for="tdd_subf' + carriers + '">Special Subframe Configuration</label>\
 				<select class="sel_tddsframe" id="tdd_subf' + carriers + '">\
-					<option value="0">Configuration 0</option>\
-					<option value="1">Configuration 1</option>\
-					<option value="2">Configuration 2</option>\
-					<option value="3">Configuration 3</option>\
-					<option value="4">Configuration 4</option>\
-					<option value="5">Configuration 5</option>\
-					<option value="6">Configuration 6</option>\
-					<option value="7">Configuration 7</option>\
-					<option value="8">Configuration 8</option>\
+					<option value="0">Special Config 0</option>\
+					<option value="1">Special Config 1</option>\
+					<option value="2">Special Config 2</option>\
+					<option value="3">Special Config 3</option>\
+					<option value="4">Special Config 4</option>\
+					<option value="5">Special Config 5</option>\
+					<option value="6">Special Config 6</option>\
+					<option value="7">Special Config 7</option>\
+					<option value="8">Special Config 8</option>\
 				</select>\
 			</div>\
 		</td>\
