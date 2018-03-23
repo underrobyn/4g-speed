@@ -173,12 +173,14 @@ var doCalc = function(carrier){
 var overallCalc = function(){
 	var total = 0;
 	for (var i = 0; i < carriers; i++){
-		var x = doCalc(i);
-		if (isNaN(x)){
-			$("#speeds").html("There was an error");
-			return;
+		if ($("#ca_id" + i).length !== 0){
+			var x = doCalc(i);
+			if (isNaN(x)){
+				$("#speeds").html("There was an error");
+				return;
+			}
+			total = total + x;
 		}
-		total = total + x;
 	}
 	$("#speeds").html(sensibleRound(total) + "Mbps");
 };
@@ -306,6 +308,9 @@ var addRow = function(){
 				<option value="2">4x4 - MiMo</option>\
 			</select>\
 		</td>\
+		<td>\
+			<button class="delete_row" data-carrierid=' + carriers + '>Remove</button>\
+		</td>\
 	</tr>');
 	
 	if (carriers !== 0){
@@ -316,8 +321,18 @@ var addRow = function(){
 	
 	$("#ca_id" + carriers + " select").on("change",overallCalc);
 	$("#ca_id" + carriers + " .sel_freq").on("change",showTddOpts);
+	$("#ca_id" + carriers + " .delete_row").on("click enter",removeRow);
 	
 	carriers++;
+	overallCalc();
+};
+
+var removeRow = function(){
+	if ($(this).data("carrierid") === 0){
+		alert("Can't remove the first carrier");
+		return;
+	}
+	$("#ca_id" + $(this).data("carrierid")).remove();
 	overallCalc();
 };
 
@@ -327,7 +342,7 @@ var addCreator = function(){
 			"id":"add_carrier"
 		}).append(
 			$("<td/>",{
-				"colspan":"4"
+				"colspan":"5"
 			}).text("Add Carrier")
 		).on("click enter",addRow)
 	);
