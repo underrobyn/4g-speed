@@ -24,7 +24,7 @@ var tldir = {
 	"U":2
 };
 var tddmod = [4,6,8];
-var tscprb = 12;							// Sub carriers per resource block
+var tscprb = 12;						// Sub carriers per resource block
 var tconf = {
 	// tconf[CONFIG][D/S/U]
 	0:[2,2,6],
@@ -64,8 +64,10 @@ var ssubconf = {
 
 // Get LTE Link Type
 var checkType = function(band){
-	if (band == 32){ // Supplementary Downlink - Could also be used for uplink
+	if (band == 29 || band == 32){ 			// Supplementary Downlink - Could also be used for uplink
 		return "SDL";
+	} else if (band == 46) { 				// Thanks @ivanz604 [Twitter]
+		return "LAA";
 	} else if (band >= 33 && band <= 48) {
 		return "TDD";
 	} else {
@@ -152,17 +154,13 @@ var doCalc = function(carrier){
 	
 	// Calculate result
 	if (ty === "TDD"){
-		
 		var ans = tdd(sw,sm,si,tc,tf,tl);
-		
+	} else if (ty === "LAA") {
+		return false;
 	} else if (ty === "FDD" || ty === "SDL"){
-		
 		var ans = fdd(sw,sm,si);
-		
 	} else {
-		
 		console.error("Unknown type:",ty);
-		
 	}
 	
 	var rounded = sensibleRound(ans);
@@ -175,6 +173,10 @@ var overallCalc = function(){
 	for (var i = 0; i < carriers; i++){
 		if ($("#ca_id" + i).length !== 0){
 			var x = doCalc(i);
+			if (x === false){
+				$("#speeds").html("LAA Band not supported yet.");
+				break;
+			}
 			if (isNaN(x)){
 				$("#speeds").html("There was an error");
 				return;
@@ -224,7 +226,7 @@ var addRow = function(){
 				<option value="26">B26 | FDD (850MHz)</option>\
 				<option value="27">B27 | FDD (800MHz)</option>\
 				<option value="28">B28 | FDD (700MHz)</option>\
-				<option value="29">B29 | FDD (700MHz)</option>\
+				<option value="29">B29 | SDL (700MHz)</option>\
 				<option value="30">B30 | FDD (2300MHz)</option>\
 				<option value="31">B31 | FDD (450MHz)</option>\
 				<option value="32">B32 | SDL (1500MHz)</option>\
@@ -238,7 +240,7 @@ var addRow = function(){
 				<option value="40">B40 | TDD (2300MHz)</option>\
 				<option value="41">B41 | TDD (2500MHz)</option>\
 				<option value="42">B42 | TDD (3500MHz)</option>\
-				<option value="43">B43 | TDD (3700MHz)</option>\
+				<option value="43">B43 | LAA (3700MHz)</option>\
 				<option value="44">B44 | TDD (700MHz)</option>\
 				<option value="45">B45 | TDD (1500MHz)</option>\
 				<option value="46">B46 | TDD (5200MHz)</option>\
@@ -314,7 +316,8 @@ var addRow = function(){
 	</tr>');
 	
 	if (carriers !== 0){
-		block.insertAfter("#ca_id" + (carriers-1))
+		var last = $(".carrier_block")[$(".carrier_block").length-1];
+		block.insertAfter(last);
 	} else {
 		$("#carriers").append(block);
 	}
