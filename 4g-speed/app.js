@@ -1,7 +1,8 @@
 /*
  * 	4G Speed Calculator
  *	Developed by AbsoluteDouble
- *	https://github.com/jake-cryptic/4g-speed
+ *	GitHub: https://github.com/jake-cryptic/4g-speed
+ * 	Website: https://absolutedouble.co.uk/
 */
 
 // Universal configurations
@@ -246,13 +247,20 @@ var addRow = function(){
 				<option value="46">B46 | LAA (5200MHz)</option>\
 				<option value="47">B47 | TDD (5900MHz)</option>\
 				<option value="48">B48 | TDD (3600MHz)</option>\
+				<option value="50">B50 | TDD (1500MHz)</option>\
+				<option value="51">B51 | TDD (1500MHz)</option>\
 				<option value="65">B65 | FDD (2100MHz)</option>\
 				<option value="66">B66 | FDD (1700MHz)</option>\
-				<option value="67">B67 | FDD (700MHz)</option>\
+				<option value="67">B67 | SDL (700MHz)</option>\
 				<option value="68">B68 | FDD (700MHz)</option>\
-				<option value="69">B69 | FDD (2600MHz)</option>\
+				<option value="69">B69 | SDL (2600MHz)</option>\
 				<option value="70">B70 | FDD (2000MHz)</option>\
 				<option value="71">B71 | FDD (600MHz)</option>\
+				<option value="72">B72 | FDD (450MHz)</option>\
+				<option value="73">B73 | FDD (450MHz)</option>\
+				<option value="74">B74 | FDD (1500MHz)</option>\
+				<option value="75">B75 | SDL (1500MHz)</option>\
+				<option value="76">B76 | SDL (1500MHz)</option>\
 			</select>\
 			<div id="tddoptblock' + carriers + '" class="tdd_config" style="display:none;">\
 				<label for="tdd_cpl' + carriers + '">Cyclic Prefix Length</label>\
