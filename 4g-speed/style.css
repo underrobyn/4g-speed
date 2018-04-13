@@ -33,22 +33,17 @@ h1 {
 h3 {
 	font-size:1.6em;
 }
-table {
-	table-layout:fixed;
+#ca_headers {
 	width:100%;
-	border-collapse:collapse;
 }
-thead{
-	box-shadow:#fff 0px 2px 0px;
-}
-th {
-	font-size:1.6em;
-}
-tbody tr {
-	text-align:center;
-}
-td{
-	padding:1.5vh 0;
+.ca_header{
+	float:left;
+	width:20%;
+	position:relative;
+	height:2.5em;
+	font-size:2.3em;
+	line-height:2.5em;
+	border-bottom:.1em solid #fff;
 }
 #title_bar {
 	width:98.5%;
@@ -63,12 +58,8 @@ td{
 	font-weight:600;
 	margin:1.5% 0;
 }
-#breakdown{
-	text-align:center;
-	font-size:1.7em;
-	margin:2.5% 0;
-}
 #add_carrier{
+	width:100%;
 	margin:1% 0 0 0;
 	line-height:2em;
 	font-size:2em;
@@ -81,8 +72,12 @@ td{
 	background-color:#c4c4c4;
 	color:#000;
 }
-.tdditm{
-	display:none;
+.carrier_row{
+	width:100%;
+}
+.rowsect{
+	width:20%;
+	float:left;
 }
 @media screen and (max-width:1000px){
 	h3,th {
