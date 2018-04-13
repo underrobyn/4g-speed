@@ -84,7 +84,7 @@ h3 {
 	font-size:1.1em;
 }
 @media screen and (max-width:1000px){
-	h3,th {
+	h3 {
 		font-size:1.4em;
 	}
 }
@@ -96,9 +96,6 @@ h3 {
 	h3 {
 		font-size:1.2em;
 	}
-	th {
-		font-weight:100;
-	}
 	#title_bar {
 		width:97%;
 		height:2.2em;
@@ -107,22 +104,12 @@ h3 {
 	#speeds{
 		margin:2.5% 0;
 	}
-	table {
-		font-size:.9em;
-	}
-	td {
-		margin:0;
-		padding:.5% 0;
-	}
 	select{
 		margin:.5% 0;
 		width:100%;
 	}
 }
 @media screen and (max-width:680px){
-	table {
-		font-size:.85em;
-	}
 	#title_bar{
 		text-align:center;
 	}
