@@ -65,9 +65,9 @@ var ssubconf = {
 
 var lteBandData = {
 	1:{"type":"FDD","frequency":"2100","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20]},
-	2:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	2:{"type":"FDD","frequency":"1900","range":["1850-1910","1930-1990"],"bandwidths":[1.4,3,5,10,15,20]},
 	3:{"type":"FDD","frequency":"1800","range":["1710-1785","1805-1880"],"bandwidths":[1.4,3,5,10,15,20]},
-	4:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	4:{"type":"FDD","frequency":"1700","range":["1710-1755","2110-2155"],"bandwidths":[1.4,3,5,10,15,20]},
 	5:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
 	6:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
 	7:{"type":"FDD","frequency":"2600","range":["2500-2570","2620-2690"],"bandwidths":[5,10,15,20]},
@@ -125,6 +125,7 @@ var lteBandData = {
 	76:{"type":"SDL","frequency":"","range":[""],"bandwidths":[]},
 };
 
+// A nice function for rounding to 2 dp
 var sensibleRound = function(n){
 	return Math.round(n*100)/100;
 };
@@ -237,16 +238,6 @@ var overallCalc = function(){
 	$("#speeds").html(sensibleRound(total) + "Mbps");
 };
 
-var showTddOpts = function(e){
-	if (checkType($("#ca_id" + $(this).data("carrier") + " .sel_freq").val()) === "TDD"){
-		$("#tddoptblock" + $(this).data("carrier")).show();
-		$(".tdditm").show();
-	} else {
-		$(".tdditm").hide();
-		$("#tddoptblock" + $(this).data("carrier")).hide();
-	}
-};
-
 var generateBandSelector = function(caid){
 	var sel = $("<select/>",{
 		"class":"rowopt_band",
@@ -259,7 +250,7 @@ var generateBandSelector = function(caid){
 		if (lteBandData[dKeys[i]].frequency !== ""){
 			txt = "Band " + dKeys[i];
 			txt += " | " + lteBandData[dKeys[i]].type;
-			txt += "(" + lteBandData[dKeys[i]].frequency + "MHz)";
+			txt += " (" + lteBandData[dKeys[i]].frequency + "MHz)";
 			
 			sel.append(
 				$("<option/>",{
@@ -275,7 +266,8 @@ var generateBandSelector = function(caid){
 var generateTddOptSelector = function(caid){
 	var opts = $("<div/>",{
 		"class":"rowsect",
-		"data-carrier":caid
+		"data-carrier":caid,
+		"style":"display:none;"
 	});
 	
 	// Cyclic Prefix Selector
@@ -345,7 +337,6 @@ var generateModulationSelector = function(caid){
 	});
 	
 	opts.append(
-		$("<label/>",{"for":"dlmod_" + caid}).text("Downlink Modulation"),
 		$("<select/>",{
 			"class":"rowopt_dlmod",
 			"id":"dlmod_" + caid,
@@ -353,7 +344,6 @@ var generateModulationSelector = function(caid){
 		}).append(
 			$("<option/>",{"value":"0"}).text("Select a band first")
 		),
-		$("<label/>",{"for":"uplmod_" + caid}).text("Uplink modulation"),
 		$("<select/>",{
 			"class":"rowopt_ulmod",
 			"id":"uplmod_" + caid,
@@ -379,7 +369,7 @@ var generateMiMoSelector = function(caid){
 		}).append(
 			$("<option/>",{"value":"0"}).text("1x1 SiSo"),
 			$("<option/>",{"value":"1"}).text("2x2 MiMo"),
-			$("<option/>",{"value":"2"}).text("4X4 MiMo"),
+			$("<option/>",{"value":"2"}).text("4X4 MiMo")
 		)
 	);
 	
@@ -396,9 +386,11 @@ var generateRowOptions = function(caid){
 		$("<button/>",{
 			"class":"b_aggupl"
 		}).text("Aggregate Uplink"),
+		$("<br />"),$("<br />"),
 		$("<button/>",{
 			"class":"b_primaryc"
 		}).text("Primary Carrier"),
+		$("<br />"),$("<br />"),
 		$("<button/>",{
 			"class":"b_rmrow"
 		}).text("Remove Carrier")
@@ -414,6 +406,7 @@ var addRow = function(){
 	});
 	
 	row.append(
+		$("<h2/>").text("Carrier #" + (carriers+1)),
 		$("<div/>",{"class":"rowsect"}).append(generateBandSelector(carriers)),
 		generateTddOptSelector(carriers),
 		generateBandWidthSelector(carriers),
@@ -422,12 +415,12 @@ var addRow = function(){
 		generateRowOptions(carriers)
 	);
 	
-	if (carriers !== 0){
-		var last = $(".carrier_block")[$(".carrier_block").length-1];
-		row.insertAfter(last);
-	} else {
+	//if (carriers !== 0){
+	//	var last = $(".carrier_block")[$(".carrier_block").length-1];
+	//	row.insertAfter(last);
+	//} else {
 		$("#ca_body").append(row);
-	}
+	//}
 	
 	// Assign selector events
 	//$("#ca_id" + carriers + " select").on("change",overallCalc);
@@ -438,137 +431,6 @@ var addRow = function(){
 };
 
 var addOldRow = function(){
-	
-	// Append new carrier
-	var block = $('<tr class="carrier_block" id="ca_id' + carriers + '">\
-		<td>\
-			<select class="sel_freq" data-carrier="' + carriers + '">\
-				<option value="1">B1 | FDD (2100MHz)</option>\
-				<option value="2">B2&nbsp;&nbsp; | FDD (1900MHz)</option>\
-				<option value="3">B3&nbsp;&nbsp; | FDD (1800MHz)</option>\
-				<option value="4">B4&nbsp;&nbsp; | FDD (1700MHz)</option>\
-				<option value="5">B5&nbsp;&nbsp; | FDD (850MHz)</option>\
-				<option value="7">B7&nbsp;&nbsp; | FDD (2600MHz)</option>\
-				<option value="8">B8&nbsp;&nbsp; | FDD (900MHz)</option>\
-				<option value="10">B10 | FDD (1700MHz)</option>\
-				<option value="11">B11 | FDD (1500MHz)</option>\
-				<option value="12">B12 | FDD (700MHz)</option>\
-				<option value="13">B13 | FDD (700MHz)</option>\
-				<option value="14">B14 | FDD (700MHz)</option>\
-				<option value="17">B17 | FDD (700MHz)</option>\
-				<option value="18">B18 | FDD (850MHz)</option>\
-				<option value="19">B19 | FDD (850MHz)</option>\
-				<option value="20">B20 | FDD (800MHz)</option>\
-				<option value="21">B21 | FDD (1500MHz)</option>\
-				<option value="22">B22 | FDD (3500MHz)</option>\
-				<option value="24">B24 | FDD (1600MHz)</option>\
-				<option value="25">B25 | FDD (1900MHz)</option>\
-				<option value="26">B26 | FDD (850MHz)</option>\
-				<option value="27">B27 | FDD (800MHz)</option>\
-				<option value="28">B28 | FDD (700MHz)</option>\
-				<option value="29">B29 | SDL (700MHz)</option>\
-				<option value="30">B30 | FDD (2300MHz)</option>\
-				<option value="31">B31 | FDD (450MHz)</option>\
-				<option value="32">B32 | SDL (1500MHz)</option>\
-				<option value="33">B33 | TDD (2100MHz)</option>\
-				<option value="34">B34 | TDD (2100MHz)</option>\
-				<option value="35">B35 | TDD (1900MHz)</option>\
-				<option value="36">B36 | TDD (1900MHz)</option>\
-				<option value="37">B37 | TDD (1900MHz)</option>\
-				<option value="38">B38 | TDD (2600MHz)</option>\
-				<option value="39">B39 | TDD (1900MHz)</option>\
-				<option value="40">B40 | TDD (2300MHz)</option>\
-				<option value="41">B41 | TDD (2500MHz)</option>\
-				<option value="42">B42 | TDD (3500MHz)</option>\
-				<option value="43">B43 | TDD (3700MHz)</option>\
-				<option value="44">B44 | TDD (700MHz)</option>\
-				<option value="45">B45 | TDD (1500MHz)</option>\
-				<option value="46">B46 | LAA (5200MHz)</option>\
-				<option value="47">B47 | TDD (5900MHz)</option>\
-				<option value="48">B48 | TDD (3600MHz)</option>\
-				<option value="50">B50 | TDD (1500MHz)</option>\
-				<option value="51">B51 | TDD (1500MHz)</option>\
-				<option value="65">B65 | FDD (2100MHz)</option>\
-				<option value="66">B66 | FDD (1700MHz)</option>\
-				<option value="67">B67 | SDL (700MHz)</option>\
-				<option value="68">B68 | FDD (700MHz)</option>\
-				<option value="69">B69 | SDL (2600MHz)</option>\
-				<option value="70">B70 | FDD (2000MHz)</option>\
-				<option value="71">B71 | FDD (600MHz)</option>\
-				<option value="72">B72 | FDD (450MHz)</option>\
-				<option value="73">B73 | FDD (450MHz)</option>\
-				<option value="74">B74 | FDD (1500MHz)</option>\
-				<option value="75">B75 | SDL (1500MHz)</option>\
-				<option value="76">B76 | SDL (1500MHz)</option>\
-			</select>\
-			<div id="tddoptblock' + carriers + '" class="tdd_config" style="display:none;">\
-				<label for="tdd_cpl' + carriers + '">Cyclic Prefix Length</label>\
-				<select class="sel_tddcpl" id="tdd_cpl' + carriers + '">\
-					<option value="normal">Normal CP (6)</option>\
-					<option value="extended">Extended CP (7)</option>\
-				</select>\
-				<br />\
-				<label for="tdd_conf' + carriers + '">TDD Configuration</label>\
-				<select class="sel_tddconfig" id="tdd_conf' + carriers + '">\
-					<option value="0">TDD Config 0</option>\
-					<option value="1">TDD Config 1</option>\
-					<option value="2">TDD Config 2</option>\
-					<option value="3">TDD Config 3</option>\
-					<option value="4">TDD Config 4</option>\
-					<option value="5">TDD Config 5</option>\
-					<option value="6">TDD Config 6</option>\
-				</select>\
-				<br />\
-				<label for="tdd_subf' + carriers + '">Special Subframe Configuration</label>\
-				<select class="sel_tddsframe" id="tdd_subf' + carriers + '">\
-					<option value="0">Special Config 0</option>\
-					<option value="1">Special Config 1</option>\
-					<option value="2">Special Config 2</option>\
-					<option value="3">Special Config 3</option>\
-					<option value="4">Special Config 4</option>\
-					<option value="5">Special Config 5</option>\
-					<option value="6">Special Config 6</option>\
-					<option value="7">Special Config 7</option>\
-					<option value="8">Special Config 8</option>\
-				</select>\
-			</div>\
-		</td>\
-		<td>\
-			<select class="sel_width">\
-				<option value="0">1.4MHz</option>\
-				<option value="1">3MHz</option>\
-				<option value="2">5MHz</option>\
-				<option value="3" selected="selected">10MHz</option>\
-				<option value="4">15MHz</option>\
-				<option value="5">20MHz</option>\
-			</select>\
-		</td>\
-		<td>\
-			<select class="sel_modulation">\
-				<option value="0">16 QAM</option>\
-				<option value="1" selected="selected">64 QAM</option>\
-				<option value="2">256 QAM</option>\
-			</select>\
-		</td>\
-		<td>\
-			<select class="sel_inout">\
-				<option value="0">1x1 - SiSo</option>\
-				<option value="1" selected="selected">2x2 - MiMo</option>\
-				<option value="2">4x4 - MiMo</option>\
-			</select>\
-		</td>\
-		<td>\
-			<button class="delete_row" data-carrierid=' + carriers + '>Remove</button>\
-		</td>\
-	</tr>');
-	
-	if (carriers !== 0){
-		var last = $(".carrier_block")[$(".carrier_block").length-1];
-		block.insertAfter(last);
-	} else {
-		$("#ca_body").append(block);
-	}
-	
 	$("#ca_id" + carriers + " select").on("change",overallCalc);
 	$("#ca_id" + carriers + " .sel_freq").on("change",showTddOpts);
 	$("#ca_id" + carriers + " .delete_row").on("click enter",removeRow);
@@ -586,27 +448,10 @@ var removeRow = function(){
 	overallCalc();
 };
 
-var addCreator = function(){
-	$("#ca_body").append(
-		$("<div/>",{
-			"id":"add_carrier"
-		}.text("Add carrier").on("click enter",addRow))
-	);
-};
-
-// A text description of the config
-var breakItDown = function(){
-	var string = "";
-	
-	
-	return string;
-};
-
 $(document).ready(function(){
 	$("#ca_body").empty();
+	$("#add_carrier").on("click enter",addRow);
 	addRow();
-	addCreator();
-	breakItDown();
 	
 	/*if ('serviceWorker' in navigator) {
 		navigator.serviceWorker.register('/sw.js').then(function(registration){
