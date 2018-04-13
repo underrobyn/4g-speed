@@ -63,6 +63,68 @@ var ssubconf = {
 	}
 };
 
+var lteBandData = {
+	1:{"type":"FDD","frequency":"2100","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20]},
+	2:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	3:{"type":"FDD","frequency":"1800","range":["1710-1785","1805-1880"],"bandwidths":[1.4,3,5,10,15,20]},
+	4:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	5:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	6:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	7:{"type":"FDD","frequency":"2600","range":["2500-2570","2620-2690"],"bandwidths":[5,10,15,20]},
+	8:{"type":"FDD","frequency":"900","range":["1920-1980","2110-2170"],"bandwidths":[1.4,3,5,10]},
+	10:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	11:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	12:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	13:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	14:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	17:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	18:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	19:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	20:{"type":"FDD","frequency":"800","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20]},
+	21:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	22:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	24:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	25:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	26:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	27:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	28:{"type":"FDD","frequency":"700","range":["1920-1980","2110-2170"],"bandwidths":[3,5,10,15,20]},
+	29:{"type":"SDL","frequency":"","range":[""],"bandwidths":[]},
+	30:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	31:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	32:{"type":"SDL","frequency":"1500","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20]},
+	33:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	34:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	35:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	36:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	37:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	38:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	39:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	40:{"type":"TDD","frequency":"2300","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20]},
+	41:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	42:{"type":"TDD","frequency":"3400","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20]},
+	43:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	44:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	45:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	46:{"type":"LAA","frequency":"","range":[""],"bandwidths":[]},
+	47:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	48:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	49:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	50:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	51:{"type":"TDD","frequency":"","range":[""],"bandwidths":[]},
+	65:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	66:{"type":"FDD","frequency":"1700","range":["1920-1980","2110-2170"],"bandwidths":[1.4,3,5,10,15,20]},
+	67:{"type":"SDL","frequency":"","range":[""],"bandwidths":[]},
+	68:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	69:{"type":"SDL","frequency":"","range":[""],"bandwidths":[]},
+	70:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	71:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	72:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	73:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	74:{"type":"FDD","frequency":"","range":[""],"bandwidths":[]},
+	75:{"type":"SDL","frequency":"","range":[""],"bandwidths":[]},
+	76:{"type":"SDL","frequency":"","range":[""],"bandwidths":[]},
+};
+
 // Get LTE Link Type
 var checkType = function(band){
 	if (band == 29 || band == 32){ 			// Supplementary Downlink - Could also be used for uplink
@@ -198,7 +260,106 @@ var showTddOpts = function(e){
 	}
 };
 
+var generateBandSelector = function(caid){
+	var sel = $("<select/>",{
+		"class":"rowopt_band",
+		"data-carrier":caid
+	});
+	
+	var dKeys = Object.keys(lteBandData);
+	
+	for (var i = 0, l = dKeys.length;i<l;i++){
+		if (lteBandData[dKeys[i]].frequency !== ""){
+			txt = "Band " + dKeys[i];
+			txt += " | " + lteBandData[dKeys[i]].type;
+			txt += "(" + lteBandData[dKeys[i]].frequency + "MHz)";
+			
+			sel.append(
+				$("<option/>",{
+					"value":dKeys[i]
+				}).text(txt)
+			);
+		}
+	}
+	
+	return sel;
+};
+
+var generateTddOptSelector = function(caid){
+	var opts = $("<div/>",{
+		"class":"rowsect",
+		"data-carrier":caid
+	});
+	
+	// Cyclic Prefix Selector
+	opts.append(
+		$("<label/>",{"for":"tddconf_cpl" + caid}).text("Cyclic Prefix Length"),
+		$("<select/>",{"class":"rowopt_tddcpl","id":"tddconf_cpl" + caid}).append(
+			$("<option/>",{"value":"normal"}).text("Normal CP [6]"),
+			$("<option/>",{"value":"extended"}).text("Extended CP [7]")
+		)
+	);
+	
+	// TDD Config Selector
+	opts.append(
+		$("<label/>",{"for":"tddconf_cnf" + caid}).text("TDD Configuration"),
+		$("<select/>",{"class":"rowopt_tddcnf","id":"tddconf_cnf" + caid}).append(
+			$("<option/>",{"value":"0"}).text("TDD Config 0"),
+			$("<option/>",{"value":"1"}).text("TDD Config 1"),
+			$("<option/>",{"value":"2"}).text("TDD Config 2"),
+			$("<option/>",{"value":"3"}).text("TDD Config 3"),
+			$("<option/>",{"value":"4"}).text("TDD Config 4"),
+			$("<option/>",{"value":"5"}).text("TDD Config 5"),
+			$("<option/>",{"value":"6"}).text("TDD Config 6")
+		)
+	);
+	
+	// Special Subframe Config Selector
+	opts.append(
+		$("<label/>",{"for":"tddconf_ssf" + caid}).text("Special Subframe Configuration"),
+		$("<select/>",{"class":"rowopt_tddssf","id":"tddconf_ssf" + caid}).append(
+			$("<option/>",{"value":"0"}).text("Special Config 0"),
+			$("<option/>",{"value":"1"}).text("Special Config 1"),
+			$("<option/>",{"value":"2"}).text("Special Config 2"),
+			$("<option/>",{"value":"3"}).text("Special Config 3"),
+			$("<option/>",{"value":"4"}).text("Special Config 4"),
+			$("<option/>",{"value":"5"}).text("Special Config 5"),
+			$("<option/>",{"value":"6"}).text("Special Config 6"),
+			$("<option/>",{"value":"7"}).text("Special Config 7"),
+			$("<option/>",{"value":"8"}).text("Special Config 8")
+		)
+	);
+	
+	return opts;
+};
+
+var generateBandWidthSelector = function(caid){
+	var opts = $("<div/>",{
+		"class":"rowsect",
+		"data-carrier":caid
+	});
+	
+	
+	
+	return opts;
+};
+
 var addRow = function(){
+	var row = $("<div/>",{
+		"id":"carrier_id_n" + carriers,
+		"class":"carrier_row"
+	});
+	
+	row.append(
+		$("<div/>",{"class":"rowsect"}).append(generateBandSelector(carriers)),
+		generateTddOptSelector(carriers),
+		generateBandWidthSelector(carriers),
+	);
+	
+	$("#breakdown").append(row);
+};
+
+var addOldRow = function(){
 	
 	// Append new carrier
 	var block = $('<tr class="carrier_block" id="ca_id' + carriers + '">\
