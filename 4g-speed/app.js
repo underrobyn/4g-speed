@@ -65,64 +65,63 @@ var ssubconf = {
 };
 
 var lteBandData = {
-	1:{"type":"FDD","frequency":"2100","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20]},
-	2:{"type":"FDD","frequency":"1900","range":["1850-1910","1930-1990"],"bandwidths":[1.4,3,5,10,15,20]},
-	3:{"type":"FDD","frequency":"1800","range":["1710-1785","1805-1880"],"bandwidths":[1.4,3,5,10,15,20]},
-	4:{"type":"FDD","frequency":"1700","range":["1710-1755","2110-2155"],"bandwidths":[1.4,3,5,10,15,20]},
-	5:{"type":"FDD","frequency":"","range":["824-849","869-894"],"bandwidths":[1.4,3,5,10]},
-	7:{"type":"FDD","frequency":"2600","range":["2500-2570","2620-2690"],"bandwidths":[5,10,15,20]},
-	8:{"type":"FDD","frequency":"900","range":["880-915","925-960"],"bandwidths":[1.4,3,5,10]},
-	10:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15,20]},
-	11:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10]},
-	12:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5,10]},
-	13:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10]},
-	14:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10]},
-	17:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10]},
-	18:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15]},
-	19:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15]},
-	20:{"type":"FDD","frequency":"800","range":["832-862","791-821"],"bandwidths":[5,10,15,20]},
-	21:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15]},
-	22:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15,20]},
-	24:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10]},
-	25:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5,10,15,20]},
-	26:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5,10,15,20]},
-	27:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5,10]},
-	28:{"type":"FDD","frequency":"700","range":["703–748","758-803"],"bandwidths":[3,5,10,15,20]},
-	29:{"type":"SDL","frequency":"","range":[""],"bandwidths":[3,5,10]},
-	30:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10]},
-	31:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5]},
-	32:{"type":"SDL","frequency":"1500","range":["1452-1496"],"bandwidths":[5,10,15,20]},
-	33:{"type":"TDD","frequency":"2100","range":["1900-1920"],"bandwidths":[5,10,15,20]},
-	34:{"type":"TDD","frequency":"2100","range":["2010-2025"],"bandwidths":[5,10,15]},
-	35:{"type":"TDD","frequency":"1900","range":["1850-1910"],"bandwidths":[1.4,3,5,10,15,20]},
-	36:{"type":"TDD","frequency":"1900","range":["1930-1990"],"bandwidths":[1.4,3,5,10,15,20]},
-	37:{"type":"TDD","frequency":"1900","range":["1910-1930"],"bandwidths":[5,10,15,20]},
-	38:{"type":"TDD","frequency":"2600","range":["2570-2620"],"bandwidths":[5,10,15,20]},
-	39:{"type":"TDD","frequency":"1900","range":["1880-1920"],"bandwidths":[5,10,15,20]},
-	40:{"type":"TDD","frequency":"2300","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20]},
-	41:{"type":"TDD","frequency":"2500","range":["2496-2690"],"bandwidths":[5,10,15,20]},
-	42:{"type":"TDD","frequency":"3400","range":["3400-3600","2110-2170"],"bandwidths":[5,10,15,20]},
-	43:{"type":"TDD","frequency":"3700","range":["3600-3800"],"bandwidths":[5,10,15,20]},
-	44:{"type":"TDD","frequency":"700","range":["703-803"],"bandwidths":[3,5,10,15,20]},
-	45:{"type":"TDD","frequency":"1500","range":["1447-1467"],"bandwidths":[5,10,15,20]},
-	46:{"type":"LAA","frequency":"","range":[""],"bandwidths":[0]},
-	47:{"type":"TDD","frequency":"","range":[""],"bandwidths":[0]},
-	48:{"type":"TDD","frequency":"","range":[""],"bandwidths":[0]},
-	49:{"type":"TDD","frequency":"","range":[""],"bandwidths":[0]},
-	50:{"type":"TDD","frequency":"","range":[""],"bandwidths":[0]},
-	51:{"type":"TDD","frequency":"","range":[""],"bandwidths":[0]},
-	65:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15,20]},
-	66:{"type":"FDD","frequency":"1700","range":["1710-1780","2110-2200"],"bandwidths":[1.4,3,5,10,15,20]},
-	67:{"type":"SDL","frequency":"","range":[""],"bandwidths":[5,10,15,20]},
-	68:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15]},
-	69:{"type":"SDL","frequency":"","range":[""],"bandwidths":[5]},
-	70:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15]},
-	71:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15,20]},
-	72:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5]},
-	73:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5]},
-	74:{"type":"FDD","frequency":"","range":[""],"bandwidths":[0]},
-	75:{"type":"SDL","frequency":"","range":[""],"bandwidths":[0]},
-	76:{"type":"SDL","frequency":"","range":[""],"bandwidths":[0]}
+	1:{"type":"FDD","frequency":"2100","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	2:{"type":"FDD","frequency":"1900","range":["1850-1910","1930-1990"],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":false},
+	3:{"type":"FDD","frequency":"1800","range":["1710-1785","1805-1880"],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":false},
+	4:{"type":"FDD","frequency":"1700","range":["1710-1755","2110-2155"],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":false},
+	5:{"type":"FDD","frequency":"850","range":["824-849","869-894"],"bandwidths":[1.4,3,5,10],"widthEstimated":false},
+	7:{"type":"FDD","frequency":"2600","range":["2500-2570","2620-2690"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	8:{"type":"FDD","frequency":"900","range":["880-915","925-960"],"bandwidths":[1.4,3,5,10],"widthEstimated":false},
+	10:{"type":"FDD","frequency":"1700","range":["1710-1770","2110-2170"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	11:{"type":"FDD","frequency":"1500","range":["1427.9-1447.9","1475.9-1495.9"],"bandwidths":[5,10],"widthEstimated":false},
+	12:{"type":"FDD","frequency":"700","range":["699-716","729-746"],"bandwidths":[1.4,3,5,10],"widthEstimated":false},
+	13:{"type":"FDD","frequency":"700","range":["777-787","746-756"],"bandwidths":[5,10],"widthEstimated":false},
+	14:{"type":"FDD","frequency":"700","range":["788-798","758-768"],"bandwidths":[5,10],"widthEstimated":false},
+	17:{"type":"FDD","frequency":"700","range":["704-716","734-746"],"bandwidths":[5,10],"widthEstimated":false},
+	18:{"type":"FDD","frequency":"850","range":["815-830","860-875"],"bandwidths":[5,10,15],"widthEstimated":false},
+	19:{"type":"FDD","frequency":"850","range":["830-845","875-890"],"bandwidths":[5,10,15],"widthEstimated":false},
+	20:{"type":"FDD","frequency":"800","range":["832-862","791-821"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	21:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15],"widthEstimated":false},
+	22:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	24:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10],"widthEstimated":false},
+	25:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":false},
+	26:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":false},
+	27:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5,10],"widthEstimated":false},
+	28:{"type":"FDD","frequency":"700","range":["703-748","758-803"],"bandwidths":[3,5,10,15,20],"widthEstimated":false},
+	29:{"type":"SDL","frequency":"","range":[""],"bandwidths":[3,5,10],"widthEstimated":false},
+	30:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10],"widthEstimated":false},
+	31:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5],"widthEstimated":false},
+	32:{"type":"SDL","frequency":"1500","range":["1452-1496"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	33:{"type":"TDD","frequency":"2100","range":["1900-1920"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	34:{"type":"TDD","frequency":"2100","range":["2010-2025"],"bandwidths":[5,10,15],"widthEstimated":false},
+	35:{"type":"TDD","frequency":"1900","range":["1850-1910"],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":false},
+	36:{"type":"TDD","frequency":"1900","range":["1930-1990"],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":false},
+	37:{"type":"TDD","frequency":"1900","range":["1910-1930"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	38:{"type":"TDD","frequency":"2600","range":["2570-2620"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	39:{"type":"TDD","frequency":"1900","range":["1880-1920"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	40:{"type":"TDD","frequency":"2300","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	41:{"type":"TDD","frequency":"2500","range":["2496-2690"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	42:{"type":"TDD","frequency":"3400","range":["3400-3600","2110-2170"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	43:{"type":"TDD","frequency":"3700","range":["3600-3800"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	44:{"type":"TDD","frequency":"700","range":["703-803"],"bandwidths":[3,5,10,15,20],"widthEstimated":false},
+	45:{"type":"TDD","frequency":"1500","range":["1447-1467"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	46:{"type":"LAA","frequency":"","range":["5150-5925"],"bandwidths":[0],"widthEstimated":true},
+	47:{"type":"TDD","frequency":"","range":["5855-5925"],"bandwidths":[0],"widthEstimated":true},
+	48:{"type":"TDD","frequency":"","range":["3550-3700"],"bandwidths":[0],"widthEstimated":true},
+	50:{"type":"TDD","frequency":"","range":["1432-1517"],"bandwidths":[0],"widthEstimated":true},
+	51:{"type":"TDD","frequency":"","range":["1427-1432"],"bandwidths":[0],"widthEstimated":true},
+	65:{"type":"FDD","frequency":"","range":["1920-2010","2110-2200"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	66:{"type":"FDD","frequency":"1700","range":["1710-1780","2110-2200"],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":false},
+	67:{"type":"SDL","frequency":"700","range":["738-758"],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	68:{"type":"FDD","frequency":"700","range":["698-728","753-783"],"bandwidths":[5,10,15],"widthEstimated":false},
+	69:{"type":"SDL","frequency":"2600","range":["2570-2620"],"bandwidths":[5],"widthEstimated":false},
+	70:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15],"widthEstimated":false},
+	71:{"type":"FDD","frequency":"","range":[""],"bandwidths":[5,10,15,20],"widthEstimated":false},
+	72:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5],"widthEstimated":false},
+	73:{"type":"FDD","frequency":"","range":[""],"bandwidths":[1.4,3,5],"widthEstimated":false},
+	74:{"type":"FDD","frequency":"","range":[""],"bandwidths":[0],"widthEstimated":true},
+	75:{"type":"SDL","frequency":"1500","range":["1432-1517"],"bandwidths":[5,10,15,20],"widthEstimated":true},
+	76:{"type":"SDL","frequency":"1500","range":["1427-1432"],"bandwidths":[5,10,15],"widthEstimated":true}
 };
 
 // A nice function for rounding to 2 dp
@@ -434,7 +433,8 @@ var generateRowOptions = function(caid){
 			"style":"display:none"
 		}).text("Primary Carrier"),
 		$("<button/>",{
-			"class":"b_rmrow"
+			"class":"b_rmrow",
+			"data-carrier":caid
 		}).text("Remove Carrier")
 	);
 	
@@ -489,7 +489,7 @@ var populateSelectors = function(band,carrier){
 		$("#rowopt_width"+carrier).append(
 			$("<option/>",{
 				"value":i
-			}).text(lteBandData[band].bandwidths[i] + "MHz")
+			}).text(lteBandData[band].bandwidths[i] + "MHz" + (lteBandData[band].widthEstimated === true ? "*" : ""))
 		);
 	}
 	
@@ -511,6 +511,8 @@ var populateSelectors = function(band,carrier){
 		$("<option/>",{"value":1}).text("2x2 MiMo"),
 		$("<option/>",{"value":2}).text("4x4 MiMo")
 	);
+	
+	tryCalculateSpeed();
 };
 
 var assignSelectorEvents = function(caid){
@@ -539,21 +541,26 @@ var addRow = function(){
 	
 	// Assign selector events
 	$("#carrier_id_n" + carriers + " select").on("change",tryCalculateSpeed);
-	//$("#ca_id" + carriers + " .delete_row").on("click enter",removeRow);
+	$("#carrier_id_n" + carriers + " .b_rmrow").on("click enter",removeRow);
 	
 	assignSelectorEvents(carriers);
 	
 	carriers++;
-	tryCalculateSpeed();
+	setTimeout(tryCalculateSpeed,1000);
 };
 
 var removeRow = function(){
-	if ($(this).data("carrierid") === 0){
+	// Check if it's the first carrier
+	if ($(this).data("carrier") === 0){
 		alert("Can't remove the first carrier");
 		return;
 	}
-	$("#ca_id" + $(this).data("carrierid")).remove();
-	overallCalc();
+	
+	// Remove the row
+	$("#carrier_id_n" + $(this).data("carrier")).remove();
+	
+	// Re-calculate the speed
+	tryCalculateSpeed();
 };
 
 $(document).ready(function(){
