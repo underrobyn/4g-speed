@@ -22,10 +22,6 @@ var tcpl = {
 	"normal":7,
 	"extended":6
 };
-var tldir = {
-	"D":0,
-	"U":2
-};
 var tddmod = [2,4,6,8];
 var tscprb = 12;						// Sub carriers per resource block
 var tconf = {
@@ -153,8 +149,6 @@ var rb = function(sw,bw){
 
 var tdd = function(selWidth,bandWidths,selModulation,selMimo,selTddCnf,selTddCpl,selTddFrm,link){
 	console.log(rb(selWidth,bandWidths),selWidth,bandWidths);
-	var dir = [link,0];
-	var consider = dir[1];
 	
 	// TDD Sect 1
 	var symps = tcpl[selTddCpl];					// # of OFDM symbols per slot of 0.5ms [symbols]
@@ -162,16 +156,16 @@ var tdd = function(selWidth,bandWidths,selModulation,selMimo,selTddCnf,selTddCpl
 	var sympsft = sympsfo*10;						// # of OFDM symbols per frame of 10ms [symbols]
 	
 	// TDD Sect 2
-	var linkoff = tldir[dir[0]];					// TDD Link Direction offset Download|Upload
+	var linkoff = (link === "D" ? 0 : 2);					// TDD Link Direction offset Download|Upload
 	
 	// TDD Configuration Section
 	var tddsconf = tconf[selTddCnf];				// TDD Selected Config
-	var frames = tddsconf[consider];
+	var frames = tddsconf[linkoff];
 	var sect1t = frames*sympsfo;
 	
 	// TDD Special Configuration Section
 	var ssubsconf = ssubconf[selTddCpl][selTddFrm];	// TDD Special Selected Config
-	var sframes = ssubsconf[consider];
+	var sframes = ssubsconf[linkoff];
 	var sect2t = sframes*tddsconf[1];				// Consider special frames
 	
 	// TDD Total config
@@ -238,7 +232,7 @@ var doCalc = function(carrier){
 		
 		// Get results
 		downlink = tdd(selWidth,bandWidths,selDlModulation,selMimo,selTddCnf,selTddCpl,selTddFrm,"D");
-		uplink = tdd(selWidth,bandWidths,selUlModulation,selMimo,selTddCnf,selTddCpl,selTddFrm,"U");
+		uplink = tdd(selWidth,bandWidths,selUlModulation,0,selTddCnf,selTddCpl,selTddFrm,"U");
 		
 	} else if (bandType === "LAA") {
 		// LAA Band is not supported yet
@@ -273,15 +267,20 @@ var tryCalculateSpeed = function(){
 	var items = $(".carrier_row");
 	var totalDownlink = 0, totalUplink = 0, errMsg = false;
 	for (var i = 0,l = items.length;i<l;i++){
-		calc = doCalc($(items[i]).data("caid"));
+		caid = $(items[i]).data("caid");
+		calc = doCalc(caid);
 		
 		if (typeof calc !== "object"){
 			$("#speeds").text(calc);
 			errMsg = true;
-			break;
+			continue;
 		}
+		
+		spd = " - <strong>" + calc[0] + "Mbps &#8595; &amp; " + calc[1] + "Mbps &#8593;</strong>";
 		totalDownlink += calc[0];
 		totalUplink += calc[1];
+		
+		setCarrierTitle($("#carrier_id_n" + caid + " .rowopt_band").val(),caid,spd);
 	}
 	
 	if (!errMsg) $("#speeds").html(totalDownlink + "Mbps &#8595; &amp; " + totalUplink + "Mbps &#8593;");
@@ -482,7 +481,7 @@ var bandSelect = function(){
 		$("#rowopt_mimo"+carrier).empty().append($("<option/>",{"value":"0"}).text("Select a band..."));
 		$("#band_title"+carrier).html("Carrier #"+(carrier+1) + " - Select a band");
 	} else {
-		setCarrierTitle(band,carrier);
+		setCarrierTitle(band,carrier,"");
 		populateSelectors(band,carrier);
 		bandOptions(band,carrier);
 	}
@@ -517,7 +516,7 @@ var lbandUxModifier = function(){
 	}
 };
 
-var setCarrierTitle = function(band,carrier){
+var setCarrierTitle = function(band,carrier,speed){
 	var title, caname;
 	if (lteBandData[band].range.length === 2){
 		title = "(Uplink: " + lteBandData[band].range[0] + "MHz, ";
@@ -532,7 +531,7 @@ var setCarrierTitle = function(band,carrier){
 		caname = "S"+(carrier-primary);
 	}
 	
-	$("#band_title"+carrier).html(caname + " - " + title);
+	$("#band_title"+carrier).html(caname + " - " + title + speed);
 };
 
 var populateSelectors = function(band,carrier){
