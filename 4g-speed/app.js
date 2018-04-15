@@ -381,7 +381,7 @@ var generateBandWidthSelector = function(caid){
 	var opts = $("<div/>",{
 		"class":"rowsect",
 		"data-carrier":caid
-	});
+	}).append($("<span/>",{"class":"rowsectheader"}).text("Band Width"));;
 	
 	opts.append(
 		$("<select/>",{
@@ -400,7 +400,7 @@ var generateModulationSelector = function(caid){
 	var opts = $("<div/>",{
 		"class":"rowsect",
 		"data-carrier":caid
-	});
+	}).append($("<span/>",{"class":"rowsectheader"}).text("Modulation"));;
 	
 	opts.append(
 		$("<label/>",{"for":"rowopt_dlmod" + caid,"id":"rowlabel_dlmod"+caid}).text("Downlink Modulation"),
@@ -428,7 +428,7 @@ var generateMiMoSelector = function(caid){
 	var opts = $("<div/>",{
 		"class":"rowsect",
 		"data-carrier":caid
-	});
+	}).append($("<span/>",{"class":"rowsectheader"}).text("MiMo"));;
 	
 	opts.append(
 		$("<select/>",{
@@ -451,7 +451,7 @@ var generateRowOptions = function(caid){
 	var opts = $("<div/>",{
 		"class":"rowsect",
 		"data-carrier":caid
-	});
+	}).append($("<span/>",{"class":"rowsectheader"}).text("Options"));
 	
 	opts.append(
 		$("<button/>",{
@@ -581,7 +581,7 @@ var addRow = function(){
 	
 	row.append(
 		$("<h2/>",{"class":"band_title","id":"band_title"+carriers}).text("Carrier #" + (carriers+1) + " - Select a band"),
-		$("<div/>",{"class":"rowsect"}).append(generateBandSelector(carriers)),
+		$("<div/>",{"class":"rowsect"}).append($("<span/>",{"class":"rowsectheader"}).text("LTE Band")).append(generateBandSelector(carriers)),
 		$("<div/>",{"class":"rowsect","id":"row_extra"+carriers}).append($("<span/>").text("No options for this band type")),
 		generateBandWidthSelector(carriers),
 		generateModulationSelector(carriers),

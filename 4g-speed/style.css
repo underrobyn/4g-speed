@@ -83,13 +83,18 @@ h3 {
 .rowsect label {
 	font-size:1.1em;
 }
+.rowsectheader {
+	display:none;
+	font-size:1.55em;
+	font-weight:600;
+}
 .band_title {
 	text-align:center;
 	padding:3px 0;
 }
-@media screen and (max-width:1000px){
-	h3 {
-		font-size:1.4em;
+@media screen and (max-width:1120px){
+	#ca_headers{
+		font-size:1.9em;
 	}
 }
 @media screen and (max-width:960px){
@@ -97,8 +102,8 @@ h3 {
 		line-height:1.5em;
 		font-size:1.5em;
 	}
-	h3 {
-		font-size:1.2em;
+	#ca_headers{
+		font-size:1.7em;
 	}
 	#title_bar {
 		width:97%;
@@ -113,8 +118,25 @@ h3 {
 		width:100%;
 	}
 }
-@media screen and (max-width:680px){
+@media screen and (max-width:800px){
 	#title_bar{
 		text-align:center;
+	}
+	#ca_headers{
+		display:none;
+	}
+	.rowsectheader{
+		display:block;
+	}
+	.rowsect label {
+		font-size:1.2em;
+	}
+	.rowsect{
+		width:50%;
+	}
+}
+@media screen and (max-width:650px){
+	.rowsect{
+		width:100%;
 	}
 }
