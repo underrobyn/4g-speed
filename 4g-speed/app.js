@@ -5,10 +5,11 @@
  * 	Website: https://absolutedouble.co.uk/
 */
 
+// For more info on the LAA band, see here: https://en.wikipedia.org/wiki/LTE_in_unlicensed_spectrum
+
 // Universal configurations
 var base = .5;							// Base number for multipliers
-var gbp = [.23,.1,.1,.1,.1,.1];			// Guard band percent (Decimal %)
-var mod = [.9,1,1.5,1.95]; 				// Modulation Multiplier
+var mod = [.5,1,1.5,1.95]; 				// Modulation Multiplier
 var mimo = [1,2,4]; 					// MiMo Multiplier
 var carriers = 0;						// Number of LTE Carriers (CA)
 var primary = 0;						// Primary carrier ID
@@ -25,7 +26,7 @@ var tldir = {
 	"D":0,
 	"U":2
 };
-var tddmod = [4,6,8];
+var tddmod = [2,4,6,8];
 var tscprb = 12;						// Sub carriers per resource block
 var tconf = {
 	// tconf[CONFIG][D/S/U]
@@ -64,6 +65,13 @@ var ssubconf = {
 	}
 };
 
+/* \\ This is the big table of LTE data //
+ type 			= Has to be FDD/TDD/SDL, this is used to determine calculation
+ frequency 		= If this isn't set the band won't show in the selector
+ range 			= This is what's shown to the user, not used for anything else
+ bandwidths 	= These show up in the selector, stops users setting 20MHz bandwidth when the band is only 10MHz wide
+ widthEstimated = If the bandwidths for a band are unknown then I guessed the values, let the user know that
+*/
 var lteBandData = {
 	1:{"type":"FDD","frequency":"2100","range":["1920-1980","2110-2170"],"bandwidths":[5,10,15,20],"widthEstimated":false},
 	2:{"type":"FDD","frequency":"1900","range":["1850-1910","1930-1990"],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":false},
@@ -131,24 +139,27 @@ var sensibleRound = function(n){
 
 var rb = function(sw,bw){
 	// ( Bandwidth (Hz) - Guard % of Bandwidth (Hz) ) / Resource block size in frequency domain (Hz)
+	
+	var gbp = (bw[sw] === 1.4 ? .23 : .1);
 	var rbs = Math.round(
 		(
 			bw[sw]*1000-(
-				bw[sw]*1000*gbp[sw]
+				bw[sw]*1000*gbp
 			)
 		)/180					
 	);
 	return rbs;
 };
 
-var tdd = function(selWidth,bandWidths,selDlModulation,selMimo,selTddCnf,selTddCpl,selTddFrm,link){
+var tdd = function(selWidth,bandWidths,selModulation,selMimo,selTddCnf,selTddCpl,selTddFrm,link){
+	console.log(rb(selWidth,bandWidths),selWidth,bandWidths);
 	var dir = [link,0];
 	var consider = dir[1];
 	
 	// TDD Sect 1
-	var symps = tcpl[selTddFrm];					// # of OFDM symbols per slot of 0.5ms [symbols]
-	var sympsfo = symps/tddbase/1000				// # of OFDM symbols per subframe of 1ms [symbols]
-	var sympsft = sympsfo*10						// # of OFDM symbols per frame of 10ms [symbols]
+	var symps = tcpl[selTddCpl];					// # of OFDM symbols per slot of 0.5ms [symbols]
+	var sympsfo = symps/tddbase/1000;				// # of OFDM symbols per subframe of 1ms [symbols]
+	var sympsft = sympsfo*10;						// # of OFDM symbols per frame of 10ms [symbols]
 	
 	// TDD Sect 2
 	var linkoff = tldir[dir[0]];					// TDD Link Direction offset Download|Upload
@@ -167,7 +178,7 @@ var tdd = function(selWidth,bandWidths,selDlModulation,selMimo,selTddCnf,selTddC
 	var totalc = sect1t + sect2t;
 	
 	// Throughput per sub carrier
-	var dltpsc = (totalc*100*tddmod[selDlModulation]/1000);
+	var dltpsc = (totalc*100*tddmod[selModulation]/1000);
 	
 	// Sub carriers per RB
 	var scprb = dltpsc*(tscprb/1000);
@@ -186,10 +197,6 @@ var tdd = function(selWidth,bandWidths,selDlModulation,selMimo,selTddCnf,selTddC
 };
 
 var fdd = function(bw,sw,sm,si){
-	console.log("FDD Calculation");
-	console.log("MiMo:",mimo[si]);
-	console.log("Mod:",mod[sm]);
-	console.log("RBs:",rb(sw,bw));
 	return base * rb(sw,bw) * mod[sm] * mimo[si];
 };
 
@@ -215,8 +222,6 @@ var doCalc = function(carrier){
 	// Initialise result containers
 	var uplink = 0;
 	var downlink = 0;
-	
-	//console.log("CALC",selWidth,selDlModulation,selUlModulation,selMimo,bandType,bandWidths);
 	
 	// Calculate result
 	if (bandType === "TDD"){
@@ -546,7 +551,7 @@ var addRow = function(){
 	assignSelectorEvents(carriers);
 	
 	carriers++;
-	setTimeout(tryCalculateSpeed,1000);
+	tryCalculateSpeed();
 };
 
 var removeRow = function(){
