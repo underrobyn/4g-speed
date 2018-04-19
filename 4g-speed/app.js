@@ -13,9 +13,10 @@ var mod = [.5,1,1.5,1.95]; 				// Modulation Multiplier
 var mimo = [1,2,4]; 					// MiMo Multiplier
 var carriers = 0;						// Number of LTE Carriers (CA)
 var primary = 0;						// Primary carrier ID
+var uploadcarriers = [];				// Array of IDs of uplink carriers
 
 // TDD Specific Configurations
-var tddbase = .0005;					// 5ms
+var defaultTddBase = .0005;					// 5ms
 
 // Extended CP rarely used in UK
 var tcpl = {
@@ -123,9 +124,9 @@ var lteBandData = {
 	71:{"type":"FDD","frequency":"600","range":["663-698","617-652"],"bandwidths":[5,10,15,20],"widthEstimated":false},
 	72:{"type":"FDD","frequency":"450","range":["451-456","461-466"],"bandwidths":[1.4,3,5],"widthEstimated":false},
 	73:{"type":"FDD","frequency":"450","range":["450-455","460-465"],"bandwidths":[1.4,3,5],"widthEstimated":false},
-	74:{"type":"FDD","frequency":"1500","range":["1427-1470","1475-1518"],"bandwidths":[0],"widthEstimated":true},
+	74:{"type":"FDD","frequency":"1500","range":["1427-1470","1475-1518"],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":true},
 	75:{"type":"SDL","frequency":"1500","range":["1432-1517"],"bandwidths":[1.4,3,5,10,15,20],"widthEstimated":true},
-	76:{"type":"SDL","frequency":"1500","range":["1427-1432"],"bandwidths":[1.4,3,5,10,15],"widthEstimated":true}
+	76:{"type":"SDL","frequency":"1500","range":["1427-1432"],"bandwidths":[1.4,3,5],"widthEstimated":true}
 };
 
 // A nice function for rounding to 2 dp
@@ -147,12 +148,10 @@ var rb = function(sw,bw){
 	return rbs;
 };
 
-var tdd = function(selWidth,bandWidths,selModulation,selMimo,selTddCnf,selTddCpl,selTddFrm,link){
-	console.log(rb(selWidth,bandWidths),selWidth,bandWidths);
-	
+var tdd = function(selWidth,bandWidths,selModulation,selMimo,selTddCnf,selTddCpl,selTddFrm,link,tddBase){
 	// TDD Sect 1
 	var symps = tcpl[selTddCpl];					// # of OFDM symbols per slot of 0.5ms [symbols]
-	var sympsfo = symps/tddbase/1000;				// # of OFDM symbols per subframe of 1ms [symbols]
+	var sympsfo = symps/tddBase/1000;				// # of OFDM symbols per subframe of 1ms [symbols]
 	var sympsft = sympsfo*10;						// # of OFDM symbols per frame of 10ms [symbols]
 	
 	// TDD Sect 2
@@ -228,11 +227,10 @@ var doCalc = function(carrier){
 		if (selTddCpl === undefined || selTddCnf === undefined || selTddFrm === undefined){
 			return "Please enter TDD Configuration";
 		}
-		console.log(selTddCpl,selTddCnf,selTddFrm);
 		
 		// Get results
-		downlink = tdd(selWidth,bandWidths,selDlModulation,selMimo,selTddCnf,selTddCpl,selTddFrm,"D");
-		uplink = tdd(selWidth,bandWidths,selUlModulation,0,selTddCnf,selTddCpl,selTddFrm,"U");
+		downlink = tdd(selWidth,bandWidths,selDlModulation,selMimo,selTddCnf,selTddCpl,selTddFrm,"D",defaultTddBase);
+		uplink = tdd(selWidth,bandWidths,selUlModulation,0,selTddCnf,selTddCpl,selTddFrm,"U",defaultTddBase);
 		
 	} else if (bandType === "LAA") {
 		// LAA Band is not supported yet
@@ -276,11 +274,11 @@ var tryCalculateSpeed = function(){
 			continue;
 		}
 		
-		spd = " - <strong>" + calc[0] + "Mbps &#8595; &amp; " + calc[1] + "Mbps &#8593;</strong>";
+		
 		totalDownlink += calc[0];
 		totalUplink += calc[1];
 		
-		setCarrierTitle($("#carrier_id_n" + caid + " .rowopt_band").val(),caid,spd);
+		setCarrierTitle($("#carrier_id_n" + caid + " .rowopt_band").val(),caid,calc);
 	}
 	
 	if (!errMsg) $("#speeds").html(totalDownlink + "Mbps &#8595; &amp; " + totalUplink + "Mbps &#8593;");
@@ -452,20 +450,25 @@ var generateRowOptions = function(caid){
 		"data-carrier":caid
 	}).append($("<span/>",{"class":"rowsectheader"}).text("Options"));
 	
+	// Every carrier should have this option
 	opts.append(
-		$("<button/>",{
-			"class":"b_aggupl",
-			"style":"display:none"
-		}).text("Aggregate Uplink"),
-		$("<button/>",{
-			"class":"b_primaryc",
-			"style":"display:none"
-		}).text("Primary Carrier"),
 		$("<button/>",{
 			"class":"b_rmrow",
 			"data-carrier":caid
 		}).text("Remove Carrier")
 	);
+	
+	// Options for carriers that aren't the primary
+	if (caid !== primary){
+		$("<button/>",{
+			"class":"b_aggupl"
+		}).text("Aggregate Uplink"),
+		opts.append(
+			$("<button/>",{
+				"class":"b_primaryc"
+			}).text("Primary Carrier")
+		);
+	}
 	
 	return opts;
 };
@@ -517,21 +520,27 @@ var lbandUxModifier = function(){
 };
 
 var setCarrierTitle = function(band,carrier,speed){
-	var title, caname;
+	var freqInf, caname;
 	if (lteBandData[band].range.length === 2){
-		title = "(Uplink: " + lteBandData[band].range[0] + "MHz, ";
-		title += "Downlink: " + lteBandData[band].range[1] + "MHz)";
+		freqInf = "Band: " + lteBandData[band].frequency + "MHz, Uplink: " + lteBandData[band].range[0] + "MHz, ";
+		freqInf += "Downlink: " + lteBandData[band].range[1] + "MHz";
 	} else {
-		title = "(" + lteBandData[band].range[0] + "MHz)";
+		freqInf = "Band: " + lteBandData[band].frequency + "MHz, Range: " + lteBandData[band].range[0] + "MHz";
 	}
 	
-	if (carrier === primary){
-		caname = "P";
-	} else {
-		caname = "S"+(carrier-primary);
+	stext = "<strong>";
+	if (speed[0] !== 0){
+		stext += calc[0] + "Mbps &#8595;";
+		if (speed[1] !== 0){
+			stext += " &amp; "
+		}
 	}
+	if (speed[1] !== 0){
+		stext += calc[1] + "Mbps &#8593;</strong>";
+	}
+	stext += "</strong>";
 	
-	$("#band_title"+carrier).html(caname + " - " + title + speed);
+	$("#band_title"+carrier).html(freqInf + "<br />" + stext);
 };
 
 var populateSelectors = function(band,carrier){
@@ -544,6 +553,7 @@ var populateSelectors = function(band,carrier){
 			}).text(lteBandData[band].bandwidths[i] + "MHz" + (lteBandData[band].widthEstimated === true ? "*" : "") + " (" + rb(i,lteBandData[band].bandwidths) + "rb)")
 		);
 	}
+	$("#rowopt_width" + carrier)[0].selectedIndex = lteBandData[band].bandwidths.length-1;
 	
 	// Populate Modulation selector
 	$("#rowopt_dlmod"+carrier).empty().append(
@@ -579,13 +589,17 @@ var addRow = function(){
 	});
 	
 	row.append(
-		$("<h2/>",{"class":"band_title","id":"band_title"+carriers}).text("Carrier #" + (carriers+1) + " - Select a band"),
-		$("<div/>",{"class":"rowsect"}).append($("<span/>",{"class":"rowsectheader"}).text("LTE Band")).append(generateBandSelector(carriers)),
-		$("<div/>",{"class":"rowsect","id":"row_extra"+carriers}).append($("<span/>").text("No options for this band type")),
-		generateBandWidthSelector(carriers),
-		generateModulationSelector(carriers),
-		generateMiMoSelector(carriers),
-		generateRowOptions(carriers)
+		$("<div/>",{"class":"row_header","id":"rhead_id"+carriers,"data-caid":carriers}).append(
+			$("<h2/>",{"class":"band_title","id":"band_title"+carriers}).text("Carrier #" + (carriers+1) + " - Select a band")
+		),
+		$("<div/>",{"class":"row_content","id":"rcont_id"+carriers}).append(
+			$("<div/>",{"class":"rowsect"}).append($("<span/>",{"class":"rowsectheader"}).text("LTE Band")).append(generateBandSelector(carriers)),
+			$("<div/>",{"class":"rowsect","id":"row_extra"+carriers}).append($("<span/>").text("No options for this band type")),
+			generateBandWidthSelector(carriers),
+			generateModulationSelector(carriers),
+			generateMiMoSelector(carriers),
+			generateRowOptions(carriers)
+		)
 	);
 	
 	$("#ca_body").append(row);
@@ -593,6 +607,7 @@ var addRow = function(){
 	// Assign selector events
 	$("#carrier_id_n" + carriers + " select").on("change",tryCalculateSpeed);
 	$("#carrier_id_n" + carriers + " .b_rmrow").on("click enter",removeRow);
+	$("#rhead_id" + carriers).on("click enter",toggleRowView);
 	
 	assignSelectorEvents(carriers);
 	
@@ -600,10 +615,19 @@ var addRow = function(){
 	tryCalculateSpeed();
 };
 
+var toggleRowView = function(){
+	var id = $(this).data("caid");
+	if ($("#rcont_id"+id).is(":visible")){
+		$("#rcont_id"+id).fadeOut(250);
+	} else {
+		$("#rcont_id"+id).fadeIn(250);
+	}
+};
+
 var removeRow = function(){
 	// Check if it's the first carrier
-	if ($(this).data("carrier") === 0){
-		alert("Can't remove the first carrier");
+	if ($(this).data("carrier") === primary){
+		alert("Can't remove the primary carrier");
 		return;
 	}
 	

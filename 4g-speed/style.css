@@ -92,6 +92,14 @@ h3 {
 	text-align:center;
 	padding:3px 0;
 }
+.row_header {
+	cursor:pointer;
+	background-color:rgba(0,0,0,0.05);
+	transition:.2s ease-in-out background-color;
+}
+.row_header:hover,.row_header:focus {
+	background-color:rgba(0,0,0,0.5);
+}
 @media screen and (max-width:1120px){
 	#ca_headers{
 		font-size:1.9em;
@@ -115,12 +123,15 @@ h3 {
 	}
 	select{
 		margin:.5% 0;
-		width:100%;
+		width:92%;
 	}
 }
 @media screen and (max-width:800px){
 	#title_bar{
 		text-align:center;
+	}
+	.band_title{
+		font-size:1.35em;
 	}
 	#ca_headers{
 		display:none;
@@ -133,6 +144,9 @@ h3 {
 	}
 	.rowsect{
 		width:50%;
+	}
+	#add_carrier {
+		margin-top:0.2em;
 	}
 }
 @media screen and (max-width:650px){
