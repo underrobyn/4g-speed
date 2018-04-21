@@ -24,7 +24,7 @@ var primary = 0;						// Primary carrier ID
 var uploadcarriers = [];				// Array of IDs of uplink carriers
 
 // TDD Specific Configurations
-var defaultTddBase = .0005;					// 5ms
+var defaultTddBase = .0005;				// 5ms
 
 // Extended CP rarely used in UK
 var tcpl = {
@@ -282,9 +282,10 @@ var tryCalculateSpeed = function(){
 			continue;
 		}
 		
-		
 		totalDownlink += calc[0];
-		totalUplink += calc[1];
+		if (uploadcarriers.indexOf(caid) !== -1 || caid === primary){
+			totalUplink += calc[1];
+		}
 		
 		setCarrierTitle($("#carrier_id_n" + caid + " .rowopt_band").val(),caid,calc);
 	}
@@ -468,13 +469,16 @@ var generateRowOptions = function(caid){
 	
 	// Options for carriers that aren't the primary
 	if (caid !== primary){
-		$("<button/>",{
-			"class":"b_aggupl"
-		}).text("Aggregate Uplink"),
 		opts.append(
 			$("<button/>",{
-				"class":"b_primaryc"
-			}).text("Primary Carrier")
+				"class":"b_aggupl",
+				"id":"rowbt_aggupl"+caid,
+				"data-carrier":caid
+			}).text("Aggregate Uplink"),
+			$("<button/>",{
+				"class":"b_primaryc",
+				"data-carrier":caid
+			}).text("Set as Primary")
 		);
 	}
 	
@@ -500,7 +504,7 @@ var bandSelect = function(){
 
 var bandOptions = function(band,carrier){
 	// Reset some stuff
-	$("#rowopt_dlmod" + carrier + ",#rowlabel_dlmod" + carrier + ",#rowopt_ulmod" + carrier + ",#rowlabel_ulmod" + carrier + ",#rowopt_mimo" + carrier).show();
+	$("#rowopt_dlmod"+carrier+",#rowlabel_dlmod"+carrier+",#rowopt_ulmod"+carrier+",#rowlabel_ulmod"+carrier+",#rowopt_mimo"+carrier+",#rowbt_aggupl"+carrier).show();
 	
 	// Band type specific configurations
 	if (lteBandData[band].type === "TDD"){
@@ -509,6 +513,7 @@ var bandOptions = function(band,carrier){
 	} else if (lteBandData[band].type === "SDL"){
 		$("#row_extra"+carrier).empty().append(generateLBandSelector(carrier));
 		$("#row_extra"+carrier+" select").on("change",tryCalculateSpeed);
+		$("#rowbt_aggupl"+carrier).hide();
 		$("#row_extra"+carrier+" select.rowopt_lbdir").on("change",lbandUxModifier).trigger("change");
 	} else {
 		$("#row_extra"+carrier).empty().append($("<span/>").text("No options for this band type"));
@@ -516,19 +521,27 @@ var bandOptions = function(band,carrier){
 };
 
 var lbandUxModifier = function(){
-	console.log("#rowlabel_ulmod" + $(this).data("carrier") + ",#rowlabel_dlmod" + $(this).data("carrier"));
-	$("#rowlabel_ulmod" + $(this).data("carrier") + ",#rowlabel_dlmod" + $(this).data("carrier")).hide();
+	var caid = $(this).data("carrier");
+	$("#rowlabel_ulmod" + caid + ",#rowlabel_dlmod" + caid).hide();
+	
 	if ($(this).val() === "0"){
-		$("#rowopt_dlmod" + $(this).data("carrier") + ",#rowopt_mimo" + $(this).data("carrier")).show();
-		$("#rowopt_ulmod" + $(this).data("carrier") + ",#rowmsg_mimo" + $(this).data("carrier")).hide();
+		$("#rowopt_dlmod" + caid + ",#rowopt_mimo" + caid).show();
+		$("#rowopt_ulmod" + caid + ",#rowmsg_mimo" + caid).hide();
+		if (uploadcarriers.indexOf(caid) !== -1){
+			uploadcarriers.slice(uploadcarriers.indexOf(caid),1);
+		}
 	} else {
-		$("#rowopt_dlmod" + $(this).data("carrier") + ",#rowopt_mimo" + $(this).data("carrier")).hide();
-		$("#rowopt_ulmod" + $(this).data("carrier") + ",#rowmsg_mimo" + $(this).data("carrier")).show();
+		$("#rowopt_dlmod" + caid + ",#rowopt_mimo" + caid).hide();
+		$("#rowopt_ulmod" + caid + ",#rowmsg_mimo" + caid).show();
+		if (uploadcarriers.indexOf(caid) === -1){
+			uploadcarriers.push(caid);
+		}
 	}
+	tryCalculateSpeed();
 };
 
 var setCarrierTitle = function(band,carrier,speed){
-	var freqInf, caname;
+	var freqInf, caname, stext = "";
 	if (lteBandData[band].range.length === 2){
 		freqInf = "Band: " + lteBandData[band].frequency + "MHz, Uplink: " + lteBandData[band].range[0] + "MHz, ";
 		freqInf += "Downlink: " + lteBandData[band].range[1] + "MHz";
@@ -536,17 +549,16 @@ var setCarrierTitle = function(band,carrier,speed){
 		freqInf = "Band: " + lteBandData[band].frequency + "MHz, Range: " + lteBandData[band].range[0] + "MHz";
 	}
 	
-	stext = "<strong>";
+	var uploadUsed = (uploadcarriers.indexOf(carrier) !== -1 || carrier === primary ? true : false);
 	if (speed[0] !== 0){
-		stext += calc[0] + "Mbps &#8595;";
+		stext += "<strong>" + calc[0] + "Mbps &#8595;</strong>";
 		if (speed[1] !== 0){
 			stext += " &amp; "
 		}
 	}
 	if (speed[1] !== 0){
-		stext += calc[1] + "Mbps &#8593;</strong>";
+		stext += (uploadUsed ? "<strong>":"") + calc[1] + "Mbps &#8593; " + (uploadUsed ? "</strong>":"");
 	}
-	stext += "</strong>";
 	
 	$("#band_title"+carrier).html(freqInf + "<br />" + stext);
 };
@@ -615,6 +627,8 @@ var addRow = function(){
 	// Assign selector events
 	$("#carrier_id_n" + carriers + " select").on("change",tryCalculateSpeed);
 	$("#carrier_id_n" + carriers + " .b_rmrow").on("click enter",removeRow);
+	$("#carrier_id_n" + carriers + " .b_aggupl").on("click enter",uplinkca);
+	$("#carrier_id_n" + carriers + " .b_primaryc").on("click enter",changePrimary);
 	$("#rhead_id" + carriers).on("click enter",toggleRowView);
 	
 	assignSelectorEvents(carriers);
@@ -630,6 +644,22 @@ var toggleRowView = function(){
 	} else {
 		$("#rcont_id"+id).fadeIn(250);
 	}
+};
+
+var changePrimary = function(){
+	alert("Feature not added yet");
+};
+
+var uplinkca = function(){
+	var caid = $(this).data("carrier");
+	if (uploadcarriers.indexOf(caid) === -1){
+		uploadcarriers.push(caid);
+		$(this).text("Remove Uplink Aggregation");
+	} else {
+		uploadcarriers.slice(uploadcarriers.indexOf(caid),1);
+		$(this).text("Aggregate Uplink");
+	}
+	tryCalculateSpeed();
 };
 
 var removeRow = function(){

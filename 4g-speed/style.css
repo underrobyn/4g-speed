@@ -2,6 +2,8 @@ html{
 	min-height:100vh;
 	background-color:#1a1a1a;
 	color:#fff;
+	font-family:Helvetica, sans-serif;
+	font-weight:100;
 }
 body{
 	margin:0;
