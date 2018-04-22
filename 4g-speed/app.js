@@ -17,7 +17,7 @@ if (!window.jQuery){
 
 // Universal configurations
 var base = .5;							// Base number for multipliers
-var mod = [.5,1,1.5,1.95]; 				// Modulation Multiplier
+var mod = [.5,1,1.5,1.958]; 			// Modulation Multiplier
 var mimo = [1,2,4]; 					// MiMo Multiplier
 var carriers = 0;						// Number of LTE Carriers (CA)
 var primary = 0;						// Primary carrier ID
@@ -290,7 +290,7 @@ var tryCalculateSpeed = function(){
 		setCarrierTitle($("#carrier_id_n" + caid + " .rowopt_band").val(),caid,calc);
 	}
 	
-	if (!errMsg) $("#speeds").html(totalDownlink + "Mbps &#8595; &amp; " + totalUplink + "Mbps &#8593;");
+	if (!errMsg) $("#speeds").html(sensibleRound(totalDownlink) + "Mbps &#8595; &amp; " + sensibleRound(totalUplink) + "Mbps &#8593;");
 };
 
 var generateBandSelector = function(caid){
@@ -477,7 +477,8 @@ var generateRowOptions = function(caid){
 			}).text("Aggregate Uplink"),
 			$("<button/>",{
 				"class":"b_primaryc",
-				"data-carrier":caid
+				"data-carrier":caid,
+				"style":"display:none"
 			}).text("Set as Primary")
 		);
 	}
@@ -652,12 +653,12 @@ var changePrimary = function(){
 
 var uplinkca = function(){
 	var caid = $(this).data("carrier");
-	if (uploadcarriers.indexOf(caid) === -1){
-		uploadcarriers.push(caid);
-		$(this).text("Remove Uplink Aggregation");
-	} else {
-		uploadcarriers.slice(uploadcarriers.indexOf(caid),1);
+	if (uploadcarriers.indexOf(caid) !== -1){
+		uploadcarriers.splice(uploadcarriers.indexOf(caid),1);
 		$(this).text("Aggregate Uplink");
+	} else {
+		uploadcarriers.push(caid);
+		$(this).text("Deaggregate Uplink");
 	}
 	tryCalculateSpeed();
 };
