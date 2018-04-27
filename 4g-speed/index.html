@@ -11,9 +11,9 @@
 		
 		<link rel="manifest" href="manifest.json">
 		
-		<!--[if lt IE 9]><script src="https://code.jquery.com/jquery-1.12.4.min.js"></script><![endif]--><!--[if gte IE 9]><!--><script src="https://code.jquery.com/jquery-3.3.1.min.js"></script><!--<![endif]-->
-		<script src="app.js?v1818" type="text/javascript"></script>
-		<link rel="stylesheet" href="style.css?v1818" type="text/css" media="all" />
+		<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script><![endif]--><!--[if gte IE 9]><!--><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><!--<![endif]-->
+		<script src="app.js?v122112df2a" type="text/javascript"></script>
+		<link rel="stylesheet" href="style.css?v12sdf21122a" type="text/css" media="all" />
 		
 	</head>
 	<body>
@@ -32,23 +32,18 @@
 		</div>
 		<div id="main">
 			<div id="speeds">Loading...</div>
-			<table>
-				<thead>
-					<tr>
-						<th>Band<span class="tdditm"> &amp; TDD Options</span></th>
-						<th>Bandwidth</th>
-						<th>Modulation</th>
-						<th>MiMo</th>
-						<th>Options</th>
-					</tr>
-				</thead>
-				<tbody id="carriers">
-					<tr>
-						<td colspan="5"><h3>Loading...</h3></td>
-					</tr>
-				</tbody>
-			</table>
-			<div id="breakdown"></div>
+			<div id="carriers">
+				<div id="ca_headers">
+					<div class="ca_header">Band</div>
+					<div class="ca_header">Config</div>
+					<div class="ca_header">Bandwidth</div>
+					<div class="ca_header">Modulation</div>
+					<div class="ca_header">MiMo</div>
+					<div class="ca_header">Options</div>
+				</div>
+				<div id="ca_body">Loading..</div>
+			</div>
+			<div id="add_carrier">Add Carrier</div>
 		</div>
 	</body>
 </html>
