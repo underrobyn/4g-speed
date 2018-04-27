@@ -4,6 +4,12 @@
  *	GitHub: https://github.com/jake-cryptic/4g-speed
  * 	Website: https://absolutedouble.co.uk/
 */
+if (!window.location.host.includes("absolutedouble.co.uk")){
+	console.log("\n4G Theoretical Throughput Calculator");
+	console.log("Developed by AbsoluteDouble");
+	console.log("Website: https://absolutedouble.co.uk");
+	console.log("Github: https://github.com/jake-cryptic/4g-speed");
+}
 
 // For more info on the LAA band, see here: https://en.wikipedia.org/wiki/LTE_in_unlicensed_spectrum
 
@@ -163,7 +169,7 @@ var tdd = function(selWidth,bandWidths,selModulation,selMimo,selTddCnf,selTddCpl
 	var sympsft = sympsfo*10;						// # of OFDM symbols per frame of 10ms [symbols]
 	
 	// TDD Sect 2
-	var linkoff = (link === "D" ? 0 : 2);					// TDD Link Direction offset Download|Upload
+	var linkoff = (link === "D" ? 0 : 2);			// TDD Link Direction offset Download|Upload
 	
 	// TDD Configuration Section
 	var tddsconf = tconf[selTddCnf];				// TDD Selected Config
@@ -517,7 +523,7 @@ var bandOptions = function(band,carrier){
 		$("#rowbt_aggupl"+carrier).hide();
 		$("#row_extra"+carrier+" select.rowopt_lbdir").on("change",lbandUxModifier).trigger("change");
 	} else {
-		$("#row_extra"+carrier).empty().append($("<span/>").text("No options for this band type"));
+		$("#row_extra"+carrier).empty().append($("<span/>").text("No extra options for FDD bands"));
 	}
 };
 
