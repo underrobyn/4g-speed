@@ -647,9 +647,9 @@ var addRow = function(){
 var toggleRowView = function(){
 	var id = $(this).data("caid");
 	if ($("#rcont_id"+id).is(":visible")){
-		$("#rcont_id"+id).fadeOut(250);
+		$("#rcont_id"+id).slideUp(250);
 	} else {
-		$("#rcont_id"+id).fadeIn(250);
+		$("#rcont_id"+id).slideDown(250);
 	}
 };
 
