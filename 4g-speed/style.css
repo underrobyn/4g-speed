@@ -70,6 +70,14 @@ h3 {
 	background-color:#c4c4c4;
 	color:#000;
 }
+#langsel{
+	position:absolute;
+	top:0vh;
+	right:1vw;
+	font-size:1.1em;
+	cursor:pointer;
+	display:none;
+}
 .carrier_row{
 	width:100%;
 	display:inline-block;
@@ -126,6 +134,9 @@ h3 {
 	select{
 		margin:.5% 0;
 		width:92%;
+	}
+	#langsel{
+		top:3vh;
 	}
 }
 @media screen and (max-width:800px){

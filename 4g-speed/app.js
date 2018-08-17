@@ -1,6 +1,7 @@
 /*
  * 	4G Speed Calculator
  *	Developed by AbsoluteDouble
+ * 	Special thanks to Peter Clarke for German Translations
  *	GitHub: https://github.com/jake-cryptic/4g-speed
  * 	Website: https://absolutedouble.co.uk/
 */
@@ -49,10 +50,64 @@ var strings = {
 		"label.deaggupl":"Deaggregate Uplink",
 		"label.remca":"Remove Carrier",
 		"label.setprim":"Set as Primary",
+		"label.sdl":"Downlink (SDL)",
+		"label.sul":"Uplink (SUL)",
 		"msg.nofddopts":"No extra options for FDD bands",
 		"msg.nobandopts":"No options for this band type",
 		"ux.title":"4G Theoretical Throughput Calculator",
 		"ux.addca":"Add Carrier"
+	},
+	"fr":{
+		"alert.selband":"Merci de choisir une bande de fréquence",
+		"alert.selfirst":"Sélectionnez d’abord une bande de fréquence",
+		"alert.seltext":"Sélectionnez une bande",
+		"alert.selconf":"Merci d’entrer le type de configuration TDD",
+		"alert.laaband":"La bande de fréquence LAA (??) n’est pas encore supportée",
+		"alert.remprim":"Vous ne pouvez pas supprimer la porteuse principal (pas sur)",
+		"label.tddcpl":"Cyclic préfix Length",
+		"label.tddcnf":"Configuration TDD",
+		"label.tddssf":"Special Subframe Configuration",
+		"label.band":"Bande de Fréquence",
+		"label.bandwidth":"Bande passante",
+		"label.mod":"Modulation de Fréquence",
+		"label.dlmod":"Télécharger la modulation",
+		"label.ulmod":"Modulation de téléchargement",
+		"label.aggupl":"Agrégat téléverser",
+		"label.deaggupl":"Désagréger téléverser",
+		"label.remca":"Retirer la porteuse",
+		"label.setprim":"Définir comme porteuse principale",
+		"label.sdl":"Télécharger (SDL)",
+		"label.sul":"Téléverser (SUL)",
+		"msg.nofddopts":"Aucune option disponible en FDD",
+		"msg.nobandopts":"Aucune option pour ce type de porteuse",
+		"ux.title":"Calculateur de débit théorique 4G",
+		"ux.addca":"Ajouter une porteuse"
+	},
+	"de":{
+		"alert.selband":"Bitte wählen Sie ein Frequenzband",
+		"alert.selfirst":"Bitte wählen Sie zuerst ein Frequenzband",
+		"alert.seltext":"Bitte wählen Sie ein Frequenzband",
+		"alert.selconf":"Bitte wählen Sie eine Konfiguration TDD",
+		"alert.laaband":"LAA wird noch nicht unterstützt ",
+		"alert.remprim":"Der primäre Träger kann nicht entfernt werden",
+		"label.tddcpl":"Zyklische Präfixlänge",
+		"label.tddcnf":"Konfiguration TDD ",
+		"label.tddssf":"Spezielle Subframe-Konfiguration",
+		"label.band":"Frequenzband",
+		"label.bandwidth":"Bandbreite",
+		"label.mod":"Modulation",
+		"label.dlmod":"Downlink Modulation",
+		"label.ulmod":"Uplink Modulation",
+		"label.aggupl":"Aggregat Uplink",
+		"label.deaggupl":"Disaggregieren Uplink",
+		"label.remca":"Träger entfernen" ,
+		"label.setprim":"Als primär festlegen",
+		"label.sdl":"Downlink (SDL)",
+		"label.sul":"Uplink (SUL)",
+		"msg.nofddopts":"Keine anderen Optionen zur Auswahl für FDD",
+		"msg.nobandopts":"Keine Optionen für den ausgewählten Bandtyp",
+		"ux.title":"4G Theoretische Throughput-Rechner",
+		"ux.addca":"Träger hinzufügen"
 	}
 };
 var setLang = function(){
@@ -76,7 +131,20 @@ var setLang = function(){
 		window._l = strings[l];
 	}
 };
-
+var langPopup = function(){
+	//if (navigator.language.includes("en")) return;
+	
+	$("#langsel").show();
+	$("#langsel").on("click enter",function(){
+		var langs = Object.keys(strings);
+		var str = "Enter a language code below.\nValid Codes: " + langs.join(", ");
+		var user = prompt(str,"en");
+		if (langs.indexOf(user) !== -1) {
+			Cookies.set("language",user);
+			window.location.reload();
+		}
+	});
+}
 
 // TDD Specific Configurations
 var defaultTddBase = .0005;				// 5ms
@@ -367,7 +435,7 @@ var generateBandSelector = function(caid){
 	var dKeys = Object.keys(lteBandData);
 	for (var i = 0, l = dKeys.length;i<l;i++){
 		if (lteBandData[dKeys[i]].frequency !== ""){
-			txt = "Band " + dKeys[i];
+			txt = _l["label.band"] + " " + dKeys[i];
 			txt += " | " + lteBandData[dKeys[i]].type;
 			txt += " (" + lteBandData[dKeys[i]].frequency + "MHz)";
 			
@@ -437,8 +505,8 @@ var generateLBandSelector = function(caid){
 	// Cyclic Prefix Selector
 	opts.append(
 		$("<select/>",{"class":"rowopt_lbdir","id":"lband_dir" + caid,"data-carrier":caid}).append(
-			$("<option/>",{"value":"0"}).text("Downlink (SDL)"),
-			$("<option/>",{"value":"1"}).text("Uplink (SUL)")
+			$("<option/>",{"value":"0"}).text(_l["label.sdl"]),
+			$("<option/>",{"value":"1"}).text(_l["label.sul"])
 		)
 	);
 	
@@ -754,6 +822,7 @@ var readyUx = function(){
 
 $(document).ready(function(){
 	setLang();
+	langPopup();
 	readyUx();
 	addRow();
 	
