@@ -56,11 +56,11 @@ var strings = {
 	}
 };
 var setLang = function(){
-	// Check for cookies library
-	if (typeof Cookies !== "function") return;
-	
 	// Set language to english
 	window._l = strings["en"];
+	
+	// Check for cookies library
+	if (typeof Cookies !== "function") return;
 	
 	// Get language
 	var l = Cookies.get("language");
