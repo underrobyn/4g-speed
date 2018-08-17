@@ -29,6 +29,55 @@ var carriers = 0;						// Number of LTE Carriers (CA)
 var primary = 0;						// Primary carrier ID
 var uploadcarriers = [];				// Array of IDs of uplink carriers
 
+var strings = {
+	"en":{
+		"alert.selband":"Please select a band",
+		"alert.selfirst":"Select a band first",
+		"alert.seltext":"Select a band",
+		"alert.selconf":"Please enter TDD Configuration",
+		"alert.laaband":"LAA Band is not supported yet",
+		"alert.remprim":"Can't remove the primary carrier",
+		"label.tddcpl":"Cyclic Prefix Length",
+		"label.tddcnf":"TDD Configuration",
+		"label.tddssf":"Special Subframe Configuration",
+		"label.band":"Band",
+		"label.bandwidth":"Bandwidth",
+		"label.mod":"Modulation",
+		"label.dlmod":"Downlink Modulation",
+		"label.ulmod":"Uplink Modulation",
+		"label.aggupl":"Aggregate Uplink",
+		"label.deaggupl":"Deaggregate Uplink",
+		"label.remca":"Remove Carrier",
+		"label.setprim":"Set as Primary",
+		"msg.nofddopts":"No extra options for FDD bands",
+		"msg.nobandopts":"No options for this band type",
+		"ux.title":"4G Theoretical Throughput Calculator",
+		"ux.addca":"Add Carrier"
+	}
+};
+var setLang = function(){
+	// Check for cookies library
+	if (typeof Cookies !== "function") return;
+	
+	// Set language to english
+	window._l = strings["en"];
+	
+	// Get language
+	var l = Cookies.get("language");
+	
+	// If no language cookie set, set one
+	if (l === undefined){
+		Cookies.set("language","en");
+		return;
+	}
+	
+	// If language is valid then use it
+	if (strings[l] !== undefined){
+		window._l = strings[l];
+	}
+};
+
+
 // TDD Specific Configurations
 var defaultTddBase = .0005;				// 5ms
 
@@ -220,7 +269,7 @@ var doCalc = function(carrier){
 	
 	// Check that the band was set
 	if (selBand === "0"){
-		return "Please select a band";
+		return _l["alert.selband"];
 	}
 	
 	// Get the bandwidth
@@ -246,7 +295,7 @@ var doCalc = function(carrier){
 		var selTddFrm = $("#carrier_id_n" + carrier + " .rowopt_tddssf").val();
 		
 		if (selTddCpl === undefined || selTddCnf === undefined || selTddFrm === undefined){
-			return "Please enter TDD Configuration";
+			return _l["alert.selconf"];
 		}
 		
 		// Get results
@@ -255,7 +304,7 @@ var doCalc = function(carrier){
 		
 	} else if (bandType === "LAA") {
 		// LAA Band is not supported yet
-		return "LAA Band is not supported yet";
+		return _l["alert.laaband"];
 	} else if (bandType === "FDD"){
 		
 		// Get results
@@ -313,7 +362,7 @@ var generateBandSelector = function(caid){
 		"data-carrier":caid
 	});
 	
-	sel.append($("<option/>",{"value":0}).text("Select a band"))
+	sel.append($("<option/>",{"value":0}).text(_l["alert.seltext"]))
 	
 	var dKeys = Object.keys(lteBandData);
 	for (var i = 0, l = dKeys.length;i<l;i++){
@@ -340,7 +389,7 @@ var generateTddOptSelector = function(caid){
 	
 	// Cyclic Prefix Selector
 	opts.append(
-		$("<label/>",{"for":"tddconf_cpl" + caid}).text("Cyclic Prefix Length"),
+		$("<label/>",{"for":"tddconf_cpl" + caid}).text(_l["label.tddcpl"]),
 		$("<select/>",{"class":"rowopt_tddcpl","id":"tddconf_cpl" + caid}).append(
 			$("<option/>",{"value":"normal"}).text("Normal CP [6]"),
 			$("<option/>",{"value":"extended"}).text("Extended CP [7]")
@@ -349,7 +398,7 @@ var generateTddOptSelector = function(caid){
 	
 	// TDD Config Selector
 	opts.append(
-		$("<label/>",{"for":"tddconf_cnf" + caid}).text("TDD Configuration"),
+		$("<label/>",{"for":"tddconf_cnf" + caid}).text(_l["label.tddcnf"]),
 		$("<select/>",{"class":"rowopt_tddcnf","id":"tddconf_cnf" + caid}).append(
 			$("<option/>",{"value":"0"}).text("TDD Config 0"),
 			$("<option/>",{"value":"1"}).text("TDD Config 1"),
@@ -363,7 +412,7 @@ var generateTddOptSelector = function(caid){
 	
 	// Special Subframe Config Selector
 	opts.append(
-		$("<label/>",{"for":"tddconf_ssf" + caid}).text("Special Subframe Configuration"),
+		$("<label/>",{"for":"tddconf_ssf" + caid}).text(_l["label.tddssf"]),
 		$("<select/>",{"class":"rowopt_tddssf","id":"tddconf_ssf" + caid}).append(
 			$("<option/>",{"value":"0"}).text("Special Config 0"),
 			$("<option/>",{"value":"1"}).text("Special Config 1"),
@@ -400,7 +449,7 @@ var generateBandWidthSelector = function(caid){
 	var opts = $("<div/>",{
 		"class":"rowsect",
 		"data-carrier":caid
-	}).append($("<span/>",{"class":"rowsectheader"}).text("Band Width"));;
+	}).append($("<span/>",{"class":"rowsectheader"}).text(_l["label.bandwidth"]));;
 	
 	opts.append(
 		$("<select/>",{
@@ -408,7 +457,7 @@ var generateBandWidthSelector = function(caid){
 			"id":"rowopt_width" + caid,
 			"data-carrier":caid
 		}).append(
-			$("<option/>",{"value":"0"}).text("Select a band first")
+			$("<option/>",{"value":"0"}).text(_l["alert.selfirst"])
 		)
 	);
 	
@@ -419,24 +468,24 @@ var generateModulationSelector = function(caid){
 	var opts = $("<div/>",{
 		"class":"rowsect",
 		"data-carrier":caid
-	}).append($("<span/>",{"class":"rowsectheader"}).text("Modulation"));;
+	}).append($("<span/>",{"class":"rowsectheader"}).text(_l["label.mod"]));
 	
 	opts.append(
-		$("<label/>",{"for":"rowopt_dlmod" + caid,"id":"rowlabel_dlmod"+caid}).text("Downlink Modulation"),
+		$("<label/>",{"for":"rowopt_dlmod" + caid,"id":"rowlabel_dlmod"+caid}).text(_l["label.dlmod"]),
 		$("<select/>",{
 			"class":"rowopt_dlmod",
 			"id":"rowopt_dlmod" + caid,
 			"data-carrier":caid
 		}).append(
-			$("<option/>",{"value":"0"}).text("Select a band first")
+			$("<option/>",{"value":"0"}).text(_l["alert.selfirst"])
 		),
-		$("<label/>",{"for":"rowopt_ulmod" + caid,"id":"rowlabel_ulmod"+caid}).text("Uplink Modulation"),
+		$("<label/>",{"for":"rowopt_ulmod" + caid,"id":"rowlabel_ulmod"+caid}).text(_l["label.ulmod"]),
 		$("<select/>",{
 			"class":"rowopt_ulmod",
 			"id":"rowopt_ulmod" + caid,
 			"data-carrier":caid
 		}).append(
-			$("<option/>",{"value":"0"}).text("Select a band first")
+			$("<option/>",{"value":"0"}).text(_l["alert.selfirst"])
 		)
 	);
 	
@@ -455,7 +504,7 @@ var generateMiMoSelector = function(caid){
 			"id":"rowopt_mimo" + caid,
 			"data-carrier":caid
 		}).append(
-			$("<option/>",{"value":0}).text("Select a band first")
+			$("<option/>",{"value":0}).text(_l["alert.selfirst"])
 		),
 		$("<span/>",{
 			"id":"rowmsg_mimo" + caid,
@@ -477,7 +526,7 @@ var generateRowOptions = function(caid){
 		$("<button/>",{
 			"class":"b_rmrow",
 			"data-carrier":caid
-		}).text("Remove Carrier")
+		}).text(_l["label.remca"])
 	);
 	
 	// Options for carriers that aren't the primary
@@ -487,12 +536,12 @@ var generateRowOptions = function(caid){
 				"class":"b_aggupl",
 				"id":"rowbt_aggupl"+caid,
 				"data-carrier":caid
-			}).text("Aggregate Uplink"),
+			}).text(_l["label.aggupl"]),
 			$("<button/>",{
 				"class":"b_primaryc",
 				"data-carrier":caid,
 				"style":"display:none"
-			}).text("Set as Primary")
+			}).text(_l["label.setprim"])
 		);
 	}
 	
@@ -504,10 +553,10 @@ var bandSelect = function(){
 	var carrier = $(this).data("carrier");
 	
 	if (band === "0"){
-		$("#rowopt_width"+carrier).empty().append($("<option/>",{"value":"0"}).text("Select a band..."));
-		$("#rowopt_dlmod"+carrier).empty().append($("<option/>",{"value":"0"}).text("Select a band..."));
-		$("#rowopt_ulmod"+carrier).empty().append($("<option/>",{"value":"0"}).text("Select a band..."));
-		$("#rowopt_mimo"+carrier).empty().append($("<option/>",{"value":"0"}).text("Select a band..."));
+		$("#rowopt_width"+carrier).empty().append($("<option/>",{"value":"0"}).text(_l["alert.seltext"]));
+		$("#rowopt_dlmod"+carrier).empty().append($("<option/>",{"value":"0"}).text(_l["alert.seltext"]));
+		$("#rowopt_ulmod"+carrier).empty().append($("<option/>",{"value":"0"}).text(_l["alert.seltext"]));
+		$("#rowopt_mimo"+carrier).empty().append($("<option/>",{"value":"0"}).text(_l["alert.seltext"]));
 		$("#band_title"+carrier).html("Carrier #"+(carrier+1) + " - Select a band");
 	} else {
 		setCarrierTitle(band,carrier,"");
@@ -518,7 +567,12 @@ var bandSelect = function(){
 
 var bandOptions = function(band,carrier){
 	// Reset some stuff
-	$("#rowopt_dlmod"+carrier+",#rowlabel_dlmod"+carrier+",#rowopt_ulmod"+carrier+",#rowlabel_ulmod"+carrier+",#rowopt_mimo"+carrier+",#rowbt_aggupl"+carrier).show();
+	$("	#rowopt_dlmod"+carrier+",\
+		#rowlabel_dlmod"+carrier+",\
+		#rowopt_ulmod"+carrier+",\
+		#rowlabel_ulmod"+carrier+",\
+		#rowopt_mimo"+carrier+",\
+		#rowbt_aggupl"+carrier).show();
 	
 	// Band type specific configurations
 	if (lteBandData[band].type === "TDD"){
@@ -530,7 +584,7 @@ var bandOptions = function(band,carrier){
 		$("#rowbt_aggupl"+carrier).hide();
 		$("#row_extra"+carrier+" select.rowopt_lbdir").on("change",lbandUxModifier).trigger("change");
 	} else {
-		$("#row_extra"+carrier).empty().append($("<span/>").text("No extra options for FDD bands"));
+		$("#row_extra"+carrier).empty().append($("<span/>").text(_l["msg.nofddopts"]));
 	}
 };
 
@@ -557,10 +611,10 @@ var lbandUxModifier = function(){
 var setCarrierTitle = function(band,carrier,speed){
 	var freqInf, caname, stext = "";
 	if (lteBandData[band].range.length === 2){
-		freqInf = "Band: " + lteBandData[band].frequency + "MHz, Uplink: " + lteBandData[band].range[0] + "MHz, ";
+		freqInf = _l["label.band"] + ": " + lteBandData[band].frequency + "MHz, Uplink: " + lteBandData[band].range[0] + "MHz, ";
 		freqInf += "Downlink: " + lteBandData[band].range[1] + "MHz";
 	} else {
-		freqInf = "Band: " + lteBandData[band].frequency + "MHz, Range: " + lteBandData[band].range[0] + "MHz";
+		freqInf = _l["label.band"] + ": " + lteBandData[band].frequency + "MHz, Range: " + lteBandData[band].range[0] + "MHz";
 	}
 	
 	var uploadUsed = (uploadcarriers.indexOf(carrier) !== -1 || carrier === primary ? true : false);
@@ -624,11 +678,11 @@ var addRow = function(){
 	
 	row.append(
 		$("<div/>",{"class":"row_header","id":"rhead_id"+carriers,"data-caid":carriers}).append(
-			$("<h2/>",{"class":"band_title","id":"band_title"+carriers}).text("Carrier #" + (carriers+1) + " - Select a band")
+			$("<h2/>",{"class":"band_title","id":"band_title"+carriers}).text("Carrier #" + (carriers+1) + " - " + _l["alert.seltext"])
 		),
 		$("<div/>",{"class":"row_content","id":"rcont_id"+carriers}).append(
 			$("<div/>",{"class":"rowsect"}).append($("<span/>",{"class":"rowsectheader"}).text("LTE Band")).append(generateBandSelector(carriers)),
-			$("<div/>",{"class":"rowsect","id":"row_extra"+carriers}).append($("<span/>").text("No options for this band type")),
+			$("<div/>",{"class":"rowsect","id":"row_extra"+carriers}).append($("<span/>").text(_l["msg.nobandopts"])),
 			generateBandWidthSelector(carriers),
 			generateModulationSelector(carriers),
 			generateMiMoSelector(carriers),
@@ -668,10 +722,10 @@ var uplinkca = function(){
 	var caid = $(this).data("carrier");
 	if (uploadcarriers.indexOf(caid) !== -1){
 		uploadcarriers.splice(uploadcarriers.indexOf(caid),1);
-		$(this).text("Aggregate Uplink");
+		$(this).text(_l["label.aggupl"]);
 	} else {
 		uploadcarriers.push(caid);
-		$(this).text("Deaggregate Uplink");
+		$(this).text(_l["label.deaggupl"]);
 	}
 	tryCalculateSpeed();
 };
@@ -679,7 +733,7 @@ var uplinkca = function(){
 var removeRow = function(){
 	// Check if it's the first carrier
 	if ($(this).data("carrier") === primary){
-		alert("Can't remove the primary carrier");
+		alert(_l["alert.remprim"]);
 		return;
 	}
 	
@@ -690,9 +744,17 @@ var removeRow = function(){
 	tryCalculateSpeed();
 };
 
-$(document).ready(function(){
+var readyUx = function(){
+	document.title = _l["ux.title"];
+	$("#page_title").text(_l["ux.title"]);
+	$("#add_carrier").text(_l["ux.addca"]);
 	$("#ca_body").empty();
 	$("#add_carrier").on("click enter",addRow);
+}
+
+$(document).ready(function(){
+	setLang();
+	readyUx();
 	addRow();
 	
 	/*if ('serviceWorker' in navigator) {

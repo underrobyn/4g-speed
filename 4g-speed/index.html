@@ -13,8 +13,9 @@
 		<link rel="manifest" href="manifest.json">
 		
 		<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script><![endif]--><!--[if gte IE 9]><!--><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><!--<![endif]-->
-		<script src="app.js?LatestCommit" type="text/javascript"></script>
-		<link rel="stylesheet" href="style.css?NewThroughput" type="text/css" media="all" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"></script>
+		<script src="app.js?LatestCommitVer2" type="text/javascript"></script>
+		<link rel="stylesheet" href="style.css?LatestCommitVer2" type="text/css" media="all" />
 		
 	</head>
 	<body>
@@ -30,10 +31,10 @@
 		-->
 	
 		<div id="title_bar">
-			<h1>4G Theoretical Throughput Calculator</h1>
+			<h1 id="page_title">Loading...</h1>
 		</div>
 		<div id="main">
-			<div id="speeds">Loading...</div>
+			<div id="speeds"></div>
 			<div id="carriers">
 				<div id="ca_headers">
 					<div class="ca_header">Band</div>
@@ -45,7 +46,7 @@
 				</div>
 				<div id="ca_body">Loading..</div>
 			</div>
-			<div id="add_carrier">Add Carrier</div>
+			<div id="add_carrier"></div>
 		</div>
 	</body>
 </html>
