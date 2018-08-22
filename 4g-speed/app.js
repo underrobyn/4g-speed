@@ -67,7 +67,7 @@ var strings = {
 		"label.tddcpl":"Cyclic préfix Length",
 		"label.tddcnf":"Configuration TDD",
 		"label.tddssf":"Special Subframe Configuration",
-		"label.band":"Bande de Fréquence",
+		"label.band":"Bande",
 		"label.bandwidth":"Bande passante",
 		"label.mod":"Modulation de Fréquence",
 		"label.dlmod":"Télécharger la modulation",
@@ -132,8 +132,6 @@ var setLang = function(){
 	}
 };
 var langPopup = function(){
-	//if (navigator.language.includes("en")) return;
-	
 	$("#langsel").show();
 	$("#langsel").on("click enter",function(){
 		var langs = Object.keys(strings);
