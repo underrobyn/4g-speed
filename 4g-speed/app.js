@@ -5,6 +5,22 @@
  *	GitHub: https://github.com/jake-cryptic/4g-speed
  * 	Website: https://absolutedouble.co.uk/
 */
+
+// Polyfill: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#Polyfill
+if (!String.prototype.includes) {
+	String.prototype.includes = function(search, start) {
+		if (typeof start !== 'number') {
+			start = 0;
+		}
+
+		if (start + search.length > this.length) {
+			return false;
+		} else {
+			return this.indexOf(search, start) !== -1;
+		}
+	};
+}
+
 if (!window.location.host.includes("absolutedouble.co.uk")){
 	console.log("\n4G Theoretical Throughput Calculator");
 	console.log("Developed by AbsoluteDouble");
@@ -712,6 +728,7 @@ var populateSelectors = function(band,carrier){
 	
 	// Populate Modulation selector
 	$("#rowopt_dlmod"+carrier).empty().append(
+		$("<option/>",{"value":0}).text("QPSK"),
 		$("<option/>",{"value":1}).text("16QAM"),
 		$("<option/>",{"value":2,"selected":"selected"}).text("64QAM"),
 		$("<option/>",{"value":3}).text("256QAM")
@@ -817,19 +834,22 @@ var readyUx = function(){
 	$("#add_carrier").text(_l["ux.addca"]);
 	$("#ca_body").empty();
 	$("#add_carrier").on("click enter",addRow);
-}
+};
+
+var offlineMode = function(){
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('sw.js').then(function(registration){
+			console.log('ServiceWorker registration successful with scope: ',registration.scope);
+		},function(err){
+			console.log('ServiceWorker registration failed: ',err);
+		});
+	}
+};
 
 $(document).ready(function(){
 	setLang();
 	langPopup();
 	readyUx();
 	addRow();
-	
-	/*if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('/sw.js').then(function(registration){
-			console.log('ServiceWorker registration successful with scope: ',registration.scope);
-		},function(err){
-			console.log('ServiceWorker registration failed: ',err);
-		});
-	}*/
+	offlineMode();
 });
