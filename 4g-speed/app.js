@@ -148,8 +148,7 @@ var setLang = function(){
 	}
 };
 var langPopup = function(){
-	$("#langsel").show();
-	$("#langsel").on("click enter",function(){
+	$("#langsel").show().on("click enter",function(){
 		var langs = Object.keys(strings);
 		var str = "Enter a language code below.\nValid Codes: " + langs.join(", ");
 		var user = prompt(str,"en");
@@ -158,7 +157,7 @@ var langPopup = function(){
 			window.location.reload();
 		}
 	});
-}
+};
 
 // TDD Specific Configurations
 var defaultTddBase = .0005;				// 5ms
@@ -348,7 +347,8 @@ var fdd = function(bw,sw,sm,si){
 
 var doCalc = function(carrier){
 	// Get the band
-	var selBand = $("#carrier_id_n" + carrier + " .rowopt_band").val();
+	var caDivID = "#carrier_id_n" + carrier;
+	var selBand = $(caDivID + " .rowopt_band").val();
 	
 	// Check that the band was set
 	if (selBand === "0"){
@@ -356,10 +356,10 @@ var doCalc = function(carrier){
 	}
 	
 	// Get the bandwidth
-	var selWidth = $("#carrier_id_n" + carrier + " .rowopt_width").val();
-	var selDlModulation = $("#carrier_id_n" + carrier + " .rowopt_dlmod").val();
-	var selUlModulation = $("#carrier_id_n" + carrier + " .rowopt_ulmod").val();
-	var selMimo = $("#carrier_id_n" + carrier + " .rowopt_mimo").val();
+	var selWidth = $(caDivID + " .rowopt_width").val();
+	var selDlModulation = $(caDivID + " .rowopt_dlmod").val();
+	var selUlModulation = $(caDivID + " .rowopt_ulmod").val();
+	var selMimo = $(caDivID + " .rowopt_mimo").val();
 	
 	// Determine calculation type
 	var bandType = lteBandData[selBand].type;
@@ -373,9 +373,9 @@ var doCalc = function(carrier){
 	if (bandType === "TDD"){
 		
 		// Get TDD options
-		var selTddCpl = $("#carrier_id_n" + carrier + " .rowopt_tddcpl").val();
-		var selTddCnf = $("#carrier_id_n" + carrier + " .rowopt_tddcnf").val();
-		var selTddFrm = $("#carrier_id_n" + carrier + " .rowopt_tddssf").val();
+		var selTddCpl = $(caDivID + " .rowopt_tddcpl").val();
+		var selTddCnf = $(caDivID + " .rowopt_tddcnf").val();
+		var selTddFrm = $(caDivID + " .rowopt_tddssf").val();
 		
 		if (selTddCpl === undefined || selTddCnf === undefined || selTddFrm === undefined){
 			return _l["alert.selconf"];
@@ -397,7 +397,7 @@ var doCalc = function(carrier){
 	} else if (bandType === "SDL"){
 		
 		// Get L-Band direction
-		var selLBDir = $("#carrier_id_n" + carrier + " .rowopt_lbdir").val();
+		var selLBDir = $(caDivID + " .rowopt_lbdir").val();
 		if (selLBDir === "0"){
 			downlink = fdd(bandWidths,selWidth,selDlModulation,selMimo);
 		} else {
@@ -838,7 +838,7 @@ var readyUx = function(){
 
 var offlineMode = function(){
 	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('sw.js').then(function(registration){
+		navigator.serviceWorker.register('sw.js?asd1').then(function(registration){
 			console.log('ServiceWorker registration successful with scope: ',registration.scope);
 		},function(err){
 			console.log('ServiceWorker registration failed: ',err);
