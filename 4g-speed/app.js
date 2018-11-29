@@ -440,6 +440,7 @@ var tryCalculateSpeed = function(){
 
 var generateBandSelector = function(caid){
 	var sel = $("<select/>",{
+		"title":"Select LTE Band",
 		"class":"rowopt_band",
 		"id":"rowopt_band"+caid,
 		"data-carrier":caid
@@ -473,7 +474,7 @@ var generateTddOptSelector = function(caid){
 	// Cyclic Prefix Selector
 	opts.append(
 		$("<label/>",{"for":"tddconf_cpl" + caid}).text(_l["label.tddcpl"]),
-		$("<select/>",{"class":"rowopt_tddcpl","id":"tddconf_cpl" + caid}).append(
+		$("<select/>",{"class":"rowopt_tddcpl","id":"tddconf_cpl" + caid,"title":"Select TDD Cyclic Prefix"}).append(
 			$("<option/>",{"value":"normal"}).text("Normal CP [6]"),
 			$("<option/>",{"value":"extended"}).text("Extended CP [7]")
 		)
@@ -482,7 +483,7 @@ var generateTddOptSelector = function(caid){
 	// TDD Config Selector
 	opts.append(
 		$("<label/>",{"for":"tddconf_cnf" + caid}).text(_l["label.tddcnf"]),
-		$("<select/>",{"class":"rowopt_tddcnf","id":"tddconf_cnf" + caid}).append(
+		$("<select/>",{"class":"rowopt_tddcnf","id":"tddconf_cnf" + caid,"title":"Select TDD Config"}).append(
 			$("<option/>",{"value":"0"}).text("TDD Config 0"),
 			$("<option/>",{"value":"1"}).text("TDD Config 1"),
 			$("<option/>",{"value":"2"}).text("TDD Config 2"),
@@ -496,7 +497,7 @@ var generateTddOptSelector = function(caid){
 	// Special Subframe Config Selector
 	opts.append(
 		$("<label/>",{"for":"tddconf_ssf" + caid}).text(_l["label.tddssf"]),
-		$("<select/>",{"class":"rowopt_tddssf","id":"tddconf_ssf" + caid}).append(
+		$("<select/>",{"class":"rowopt_tddssf","id":"tddconf_ssf" + caid,"title":"Select TDD Special Subframe Config"}).append(
 			$("<option/>",{"value":"0"}).text("Special Config 0"),
 			$("<option/>",{"value":"1"}).text("Special Config 1"),
 			$("<option/>",{"value":"2"}).text("Special Config 2"),
@@ -536,6 +537,7 @@ var generateBandWidthSelector = function(caid){
 	
 	opts.append(
 		$("<select/>",{
+			"title":"Select LTE Bandwidth",
 			"class":"rowopt_width",
 			"id":"rowopt_width" + caid,
 			"data-carrier":caid
@@ -556,6 +558,7 @@ var generateModulationSelector = function(caid){
 	opts.append(
 		$("<label/>",{"for":"rowopt_dlmod" + caid,"id":"rowlabel_dlmod"+caid}).text(_l["label.dlmod"]),
 		$("<select/>",{
+			"title":"Select downlink modulation scheme",
 			"class":"rowopt_dlmod",
 			"id":"rowopt_dlmod" + caid,
 			"data-carrier":caid
@@ -564,6 +567,7 @@ var generateModulationSelector = function(caid){
 		),
 		$("<label/>",{"for":"rowopt_ulmod" + caid,"id":"rowlabel_ulmod"+caid}).text(_l["label.ulmod"]),
 		$("<select/>",{
+			"title":"Select uplink modulation scheme",
 			"class":"rowopt_ulmod",
 			"id":"rowopt_ulmod" + caid,
 			"data-carrier":caid
@@ -583,6 +587,7 @@ var generateMiMoSelector = function(caid){
 	
 	opts.append(
 		$("<select/>",{
+			"title":"Select carrier MIMO",
 			"class":"rowopt_mimo",
 			"id":"rowopt_mimo" + caid,
 			"data-carrier":caid
@@ -838,7 +843,7 @@ var readyUx = function(){
 
 var offlineMode = function(){
 	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('sw.js?asd1').then(function(registration){
+		navigator.serviceWorker.register('sw.js').then(function(registration){
 			console.log('ServiceWorker registration successful with scope: ',registration.scope);
 		},function(err){
 			console.log('ServiceWorker registration failed: ',err);
