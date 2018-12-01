@@ -16,6 +16,11 @@
 			"src": "4g-256.png",
 			"type": "image/png",
 			"sizes": "256x256"
+		},
+		{
+			"src": "4g-512.png",
+			"type": "image/png",
+			"sizes": "512x512"
 		}
 	],
 	"start_url":"/4g-speed/",
