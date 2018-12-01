@@ -48,6 +48,7 @@ var uploadcarriers = [];				// Array of IDs of uplink carriers
 
 var strings = {
 	"en":{
+		"numeric.separators":[",","."],
 		"alert.selband":"Please select a band",
 		"alert.selfirst":"Select a band first",
 		"alert.seltext":"Select a band",
@@ -58,6 +59,7 @@ var strings = {
 		"label.tddcnf":"TDD Configuration",
 		"label.tddssf":"Special Subframe Configuration",
 		"label.band":"Band",
+		"label.earfcn":"EARFCN",
 		"label.bandwidth":"Bandwidth",
 		"label.mod":"Modulation",
 		"label.dlmod":"Downlink Modulation",
@@ -74,6 +76,7 @@ var strings = {
 		"ux.addca":"Add Carrier"
 	},
 	"fr":{
+		"numeric.separators":[".",","],
 		"alert.selband":"Merci de choisir une bande",
 		"alert.selfirst":"Sélectionnez d’abord une bande",
 		"alert.seltext":"Sélectionnez une bande",
@@ -84,6 +87,7 @@ var strings = {
 		"label.tddcnf":"Configuration TDD",
 		"label.tddssf":"Special Subframe Configuration",
 		"label.band":"Bande",
+		"label.earfcn":"EARFCN",
 		"label.bandwidth":"Bande passante",
 		"label.mod":"Modulation de Fréquence",
 		"label.dlmod":"Télécharger la modulation",
@@ -100,6 +104,7 @@ var strings = {
 		"ux.addca":"Ajouter une porteuse"
 	},
 	"de":{
+		"numeric.separators":[".",","],
 		"alert.selband":"Bitte wählen Sie ein Frequenzband",
 		"alert.selfirst":"Bitte wählen Sie zuerst ein Frequenzband",
 		"alert.seltext":"Bitte wählen Sie ein Frequenzband",
@@ -110,6 +115,7 @@ var strings = {
 		"label.tddcnf":"Konfiguration TDD ",
 		"label.tddssf":"Spezielle Subframe-Konfiguration",
 		"label.band":"Frequenzband",
+		"label.earfcn":"EARFCN",
 		"label.bandwidth":"Bandbreite",
 		"label.mod":"Modulation",
 		"label.dlmod":"Downlink Modulation",
@@ -286,6 +292,24 @@ var sensibleRound = function(n){
 	return Math.round(n*100)/100;
 };
 
+var languageNumerics = function(a){
+	//a = a.toString().replace(/,/g, "{c}");
+	//a = a.toString().replace(/\./g, "{d}");
+	return a;
+};
+
+// Thanks to: https://stackoverflow.com/a/6786040
+var commafy = function(num) {
+	var str = num.toString().split('.');
+	if (str[0].length >= 4) {
+		str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+	}
+	if (str[1] && str[1].length >= 5) {
+		str[1] = str[1].replace(/(\d{3})/g, '$1 ');
+	}
+	return str.join('.');
+};
+
 var rb = function(sw,bw){
 	// ( Bandwidth (Hz) - Guard % of Bandwidth (Hz) ) / Resource block size in frequency domain (Hz)
 	
@@ -435,7 +459,22 @@ var tryCalculateSpeed = function(){
 		setCarrierTitle($("#carrier_id_n" + caid + " .rowopt_band").val(),caid,calc);
 	}
 	
-	if (!errMsg) $("#speeds").html(sensibleRound(totalDownlink) + "Mbps &#8595; &amp; " + sensibleRound(totalUplink) + "Mbps &#8593;");
+	var dlTxt = languageNumerics(commafy(sensibleRound(totalDownlink)));
+	var ulTxt = languageNumerics(commafy(sensibleRound(totalUplink)));
+	
+	if (!errMsg) $("#speeds").html(dlTxt + "Mbps &#8595; &amp; " + ulTxt + "Mbps &#8593;");
+};
+
+var generateCenterFreqSelector = function(caid){
+	var sel = $("<input/>",{
+		"type":"number",
+		"class":"rowopt_earfcn",
+		"placeholder":_l["label.earfcn"],
+		"id":"rowopt_earfcn"+caid,
+		"data-carrier":caid
+	}).on("input paste",doCenterFreqSearch);
+	
+	return sel;
 };
 
 var generateBandSelector = function(caid){
@@ -464,6 +503,22 @@ var generateBandSelector = function(caid){
 	}
 	
 	return sel;
+};
+
+var generateBandSection = function(caid){
+	var opts = $("<div/>",{
+		"class":"rowsect",
+		"data-carrier":caid
+	}).append($("<span/>",{"class":"rowsectheader"}).text(_l["label.band"]));
+	
+	opts.append(
+		$("<label/>",{"for":"rowopt_earfcn" + caid,"id":"rowlabel_earfcn"+caid}).text(_l["label.earfcn"]),
+		generateCenterFreqSelector(caid),
+		$("<label/>",{"for":"rowopt_band" + caid,"id":"rowlabel_band"+caid}).text(_l["label.band"]),
+		generateBandSelector(caid)
+	);
+	
+	return opts;
 };
 
 var generateTddOptSelector = function(caid){
@@ -636,6 +691,25 @@ var generateRowOptions = function(caid){
 	return opts;
 };
 
+var doCenterFreqSearch = function(){
+	var earfcn = $(this).val();
+	var keys = Object.keys(lteBandData);
+	var band = 0;
+	
+	if (earfcn.length !== 0){
+		for (var i = 0;i < keys.length;i++){
+			var bounds = lteBandData[keys[i]].earfcn;
+			if (earfcn >= bounds[0] && earfcn <= bounds[1]){
+				band = keys[i];
+				console.log(band);
+				break;
+			}
+		}
+	}
+	
+	$("#rowopt_band"+$(this).data("carrier")).val(band).change();
+};
+
 var bandSelect = function(){
 	var band = $(this).val();
 	var carrier = $(this).data("carrier");
@@ -770,7 +844,7 @@ var addRow = function(){
 			$("<h2/>",{"class":"band_title","id":"band_title"+carriers}).text("Carrier #" + (carriers+1) + " - " + _l["alert.seltext"])
 		),
 		$("<div/>",{"class":"row_content","id":"rcont_id"+carriers}).append(
-			$("<div/>",{"class":"rowsect"}).append($("<span/>",{"class":"rowsectheader"}).text("LTE Band")).append(generateBandSelector(carriers)),
+			generateBandSection(carriers),
 			$("<div/>",{"class":"rowsect","id":"row_extra"+carriers}).append($("<span/>").text(_l["msg.nobandopts"])),
 			generateBandWidthSelector(carriers),
 			generateModulationSelector(carriers),

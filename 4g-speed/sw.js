@@ -1,6 +1,6 @@
 "use strict";
 
-var version = 'v2:';
+var version = 'v6:';
 var appName = "4gspeed"
 var appAssets = [
 	'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js',
@@ -11,11 +11,12 @@ var appAssets = [
 	'/4g-speed/4g-96.png',
 	'/4g-speed/4g-192.png',
 	'/4g-speed/manifest.json',
-	'/4g-speed/app.js',
-	'/4g-speed/style.css'
+	'/4g-speed/app.js?TheOneWithEARFCNSelector',
+	'/4g-speed/style.css?TheOneWithEARFCNSelector'
 ];
 
 self.addEventListener("install", function (event) {
+	self.skipWaiting();
 	event.waitUntil(caches.open(version + appName).then(function(cache){
 		return cache.addAll(appAssets);
 	}).then(function () {

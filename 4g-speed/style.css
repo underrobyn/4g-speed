@@ -17,10 +17,46 @@ select,button {
 	line-height:1.2em;
 	padding:5px;
 }
-select{
+select,input[type="number"]{
 	margin:.5% 5%;
 	width:90%;
+	-webkit-appearance:none;
 }
+input[type="number"]{
+	-moz-appearance:textfield;
+	appearance:textfield;
+	background:#1a1a1a;
+	color:#fff;
+	border:1.5px solid #ff7e22;
+	font-size:1.2em;
+	line-height:1.2em;
+	padding:5px;
+}
+
+/* Can't group these see: https://stackoverflow.com/a/2610741 */
+::-webkit-input-placeholder{color:#fff;}
+:-moz-input-placeholder{opacity:1;color:#fff;}
+:-ms-input-placeholder{color:#fff;}
+::placeholder{opacity:1;color:#fff;}
+::-moz-input-placeholder{opacity:1;color:#fff;}
+::-ms-input-placeholder{color:#fff;}
+
+input[type="number"]:hover,
+input[type="number"]:focus {
+	-moz-appearance:number-input;
+	appearance:number-input;
+}
+/*input[type=number]::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+}*/
+
+input[type="number"],select{
+	-ms-box-sizing:content-box;
+	-moz-box-sizing:content-box;
+	-webkit-box-sizing:content-box; 
+	box-sizing:content-box;
+}
+
 h1,h2,h3 {
 	margin:0;
 	padding:0;
@@ -131,7 +167,7 @@ h3 {
 	#speeds{
 		margin:2.5% 0;
 	}
-	select{
+	select,input[type="number"]{
 		margin:.5% 0;
 		width:92%;
 	}
