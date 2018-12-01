@@ -138,11 +138,6 @@ h3 {
 	#langsel{
 		top:3vh;
 	}
-}
-@media screen and (max-width:800px){
-	#title_bar{
-		text-align:center;
-	}
 	.band_title{
 		font-size:1.35em;
 	}
@@ -156,14 +151,34 @@ h3 {
 		font-size:1.2em;
 	}
 	.rowsect{
-		width:50%;
+		width:33.333%;
 	}
 	#add_carrier {
 		margin-top:0.2em;
 	}
 }
+@media screen and (max-width:768px){
+	#title_bar{
+		text-align:center;
+	}
+	.band_title{
+		font-size:1.35em;
+	}
+	.rowsect{
+		width:50%;
+	}
+}
 @media screen and (max-width:650px){
 	.rowsect{
 		width:100%;
+	}
+}
+@media screen and (max-width:400px){
+	#title_bar{
+		height:2.5em;
+	}
+	#page_title{
+		line-height:1em;
+		font-size:1.2em;
 	}
 }
