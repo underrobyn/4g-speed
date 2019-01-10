@@ -771,8 +771,10 @@ var doCenterFreqSearch = function(){
 };
 
 var doCustomResourceBlock = function(){
+	if ($(this).val() === "") return;
+	
 	if (window.strict3gpp === true){
-		if ($(this).val() > 100 || $(this).val() < 5){
+		if ($(this).val() > 100){
 			alert("Invalid number of resource blocks.\nIf you wish to override this, disable '"+_l["ux.adherespec"]+"' in settings.");
 			return;
 		}
