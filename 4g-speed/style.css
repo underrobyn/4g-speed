@@ -106,13 +106,27 @@ h3 {
 	background-color:#c4c4c4;
 	color:#000;
 }
-#langsel{
+#open_settings{
 	position:absolute;
 	top:0vh;
 	right:1vw;
-	font-size:1.1em;
+	font-size:1.2em;
 	cursor:pointer;
+}
+#settings{
 	display:none;
+	height:100%;
+	width:100%;
+	position:absolute;
+	z-index:100;
+	top:0;
+	background-color:rgba(0,0,0,0.95);
+	text-align:center;
+	font-size:1.4em;
+}
+#settings button{
+	cursor:pointer;
+	font-size:0.8em;
 }
 .carrier_row{
 	width:100%;
@@ -171,7 +185,7 @@ h3 {
 		margin:.5% 0;
 		width:92%;
 	}
-	#langsel{
+	#open_settings{
 		top:3vh;
 	}
 	.band_title{

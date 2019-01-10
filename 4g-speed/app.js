@@ -39,12 +39,14 @@ if (!window.jQuery){
 }
 
 // Universal configurations
+var followSpec = true;					// Choose if client follows LTE Specification
 var base = .5;							// Base number for multipliers
 var mod = [.5,1,1.5,1.958]; 			// Modulation Multiplier
 var mimo = [1,2,4]; 					// MiMo Multiplier
 var carriers = 0;						// Number of LTE Carriers (CA)
 var primary = 0;						// Primary carrier ID
 var uploadcarriers = [];				// Array of IDs of uplink carriers
+var vBandwidths = [1.4,3,5,10,15,20];	// List of valid bandwidths
 
 var strings = {
 	"en":{
@@ -59,6 +61,9 @@ var strings = {
 		"label.tddcnf":"TDD Configuration",
 		"label.tddssf":"Special Subframe Configuration",
 		"label.band":"Band",
+		"label.config":"Config",
+		"label.mimo":"MiMo",
+		"label.options":"Options",
 		"label.earfcn":"EARFCN",
 		"label.resblocks":"Resource Blocks",
 		"label.bandwidth":"Bandwidth",
@@ -74,6 +79,11 @@ var strings = {
 		"msg.nofddopts":"No extra options for FDD bands",
 		"msg.nobandopts":"No options for this band type",
 		"ux.title":"4G Theoretical Throughput Calculator",
+		"ux.exitsetting":"Close Settings",
+		"ux.settings":"Settings",
+		"ux.reloadwarn":"Page will reload after setting change.",
+		"ux.language":"Update Language",
+		"ux.adherespec":"Adhere to 3gpp specification for LTE",
 		"ux.addca":"Add Carrier"
 	},
 	"fr":{
@@ -88,6 +98,9 @@ var strings = {
 		"label.tddcnf":"Configuration TDD",
 		"label.tddssf":"Special Subframe Configuration",
 		"label.band":"Bande",
+		"label.config":"Config",
+		"label.mimo":"MiMo",
+		"label.options":"Options",
 		"label.earfcn":"EARFCN",
 		"label.bandwidth":"Bande passante",
 		"label.resblocks":"Blocs de ressources",
@@ -103,6 +116,11 @@ var strings = {
 		"msg.nofddopts":"Aucune option disponible en FDD",
 		"msg.nobandopts":"Aucune option pour ce type de porteuse",
 		"ux.title":"Calculateur de débit théorique 4G",
+		"ux.exitsetting":"Fermer préférences",
+		"ux.settings":"Préférences",
+		"ux.reloadwarn":"Page will reload after setting change.",
+		"ux.language":"Choisir langue",
+		"ux.adherespec":"Adhérer aux spécifications 3GPP pour LTE",
 		"ux.addca":"Ajouter une porteuse"
 	},
 	"de":{
@@ -117,6 +135,9 @@ var strings = {
 		"label.tddcnf":"Konfiguration TDD ",
 		"label.tddssf":"Spezielle Subframe-Konfiguration",
 		"label.band":"Frequenzband",
+		"label.config":"Config",
+		"label.mimo":"MiMo",
+		"label.options":"Optionen",
 		"label.earfcn":"EARFCN",
 		"label.bandwidth":"Bandbreite",
 		"label.resblocks":"Ressourcenblöcke",
@@ -132,40 +153,42 @@ var strings = {
 		"msg.nofddopts":"Keine anderen Optionen zur Auswahl für FDD",
 		"msg.nobandopts":"Keine Optionen für den ausgewählten Bandtyp",
 		"ux.title":"4G Theoretische Throughput-Rechner",
+		"ux.exitsetting":"Close Settings",
+		"ux.settings":"Settings",
+		"ux.reloadwarn":"Page will reload after setting change.",
+		"ux.language":"Sprache wählen",
+		"ux.adherespec":"Adhere to 3gpp specification for LTE",
 		"ux.addca":"Träger hinzufügen"
 	}
 };
-var setLang = function(){
-	// Set language to english
+var loadSettings = function(){
+	// Set default values
 	window._l = strings["en"];
+	window.strict3gpp = true;
 	
 	// Check for cookies library
 	if (typeof Cookies !== "function") return;
 	
-	// Get language
+	// Get setting information from cookies
 	var l = Cookies.get("language");
+	var s = Cookies.get("strict3gpp");
 	
-	// If no language cookie set, set one
+	// If no setting cookie set, set one
 	if (l === undefined){
 		Cookies.set("language","en");
-		return;
+	}
+	if (s === undefined){
+		Cookies.set("strict3gpp","true");
 	}
 	
 	// If language is valid then use it
 	if (strings[l] !== undefined){
 		window._l = strings[l];
 	}
-};
-var langPopup = function(){
-	$("#langsel").show().on("click enter",function(){
-		var langs = Object.keys(strings);
-		var str = "Enter a language code below.\nValid Codes: " + langs.join(", ");
-		var user = prompt(str,"en");
-		if (langs.indexOf(user) !== -1) {
-			Cookies.set("language",user);
-			window.location.reload();
-		}
-	});
+	
+	window.strict3gpp = (s === "false" ? false : true);
+	
+	console.log("\n",l,s,"\n");
 };
 
 // TDD Specific Configurations
@@ -748,6 +771,13 @@ var doCenterFreqSearch = function(){
 };
 
 var doCustomResourceBlock = function(){
+	if (window.strict3gpp === true){
+		if ($(this).val() > 100 || $(this).val() < 5){
+			alert("Invalid number of resource blocks.\nIf you wish to override this, disable '"+_l["ux.adherespec"]+"' in settings.");
+			return;
+		}
+	}
+	
 	$("#rowopt_width" + $(this).data("carrier")).css("opacity",0.5);
 	tryCalculateSpeed();
 };
@@ -838,16 +868,18 @@ var setCarrierTitle = function(band,carrier,speed){
 var populateSelectors = function(band,carrier){
 	// Populate bandwidth selector
 	$("#rowopt_width"+carrier).empty();
-	for (var i = 0, l = lteBandData[band].bandwidths.length;i<l;i++){
-		var iterRbs = rb(i,lteBandData[band].bandwidths);
+	
+	var bandwidthVals = (window.strict3gpp === true ? lteBandData[band].bandwidths : vBandwidths);
+	for (var i = 0, l = bandwidthVals.length;i<l;i++){
+		var iterRbs = rb(i,bandwidthVals);
 		$("#rowopt_width"+carrier).append(
 			$("<option/>",{
 				"value":i,
 				"data-rbcount":iterRbs
-			}).text(lteBandData[band].bandwidths[i] + "MHz" + " (" + iterRbs + "RBs)")
+			}).text(bandwidthVals[i] + "MHz" + " (" + iterRbs + "RBs)")
 		);
 	}
-	$("#rowopt_width" + carrier)[0].selectedIndex = lteBandData[band].bandwidths.length-1;
+	$("#rowopt_width" + carrier)[0].selectedIndex = bandwidthVals.length-1;
 	
 	// Populate Modulation selector
 	$("#rowopt_dlmod"+carrier).empty().append(
@@ -956,12 +988,90 @@ var removeRow = function(){
 	tryCalculateSpeed();
 };
 
+var modifySetting = function(){
+	var s = $(this).data("setting");
+	
+	if (s === "language"){
+		var langs = Object.keys(strings);
+		var str = "Enter a language code below.\nValid Codes: " + langs.join(", ");
+		var user = prompt(str,"en");
+		if (langs.indexOf(user) !== -1) {
+			Cookies.set("language",user);
+			window.location.reload();
+		}
+	} else {
+		if (window.strict3gpp === true){
+			Cookies.set("strict3gpp","false");
+		} else {
+			Cookies.set("strict3gpp","true");
+		}
+		window.location.reload();
+	}
+};
+
+var openSettings = function(){
+	// Check for cookies library
+	if (typeof Cookies !== "function") {
+		alert("Cannot change settings due to library error.");
+	}
+	
+	$("#settings").slideDown(500).empty().append(
+		$("<br/>"),
+		$("<h1/>").text(_l["ux.settings"]),
+		$("<h2/>").text(_l["ux.reloadwarn"]),
+		$("<br/>"),
+		$("<label/>",{
+			"for":"follow_spec"
+		}).text(_l["ux.adherespec"]),
+		$("<input/>",{
+			"type":"checkbox",
+			"name":"follow_spec",
+			"id":"follow_spec",
+			"checked":true,
+			"data-setting":"3gppspec"
+		}).on("click enter",modifySetting),
+		$("<br/>"),$("<br/>"),
+		$("<button/>",{
+			"data-setting":"language"
+		}).on("click enter",modifySetting).text(_l["ux.language"]),
+		$("<span/>").text(" "),
+		$("<button/>").on("click enter",function(){
+			window.location.href = "https://github.com/jake-cryptic/4g-speed";
+		}).text("GitHub"),
+		$("<span/>").text(" "),
+		$("<button/>").on("click enter",closeSettings).text(_l["ux.exitsetting"])
+	);
+	
+	// Get settings
+	loadSettings();
+	
+	if (window.strict3gpp === false){
+		$("#follow_spec").prop("checked",false);
+	}
+};
+var closeSettings = function(){
+	$("#settings").fadeOut(500);
+};
+
 var readyUx = function(){
 	document.title = _l["ux.title"];
 	$("#page_title").text(_l["ux.title"]);
 	$("#add_carrier").text(_l["ux.addca"]);
 	$("#ca_body").empty();
 	$("#add_carrier").on("click enter",addRow);
+	$("#open_settings").on("click enter",openSettings);
+	
+	updateLangExistingUi();
+};
+var updateLangExistingUi = function(){
+	$("#ca_headers").empty().append(
+		$("<div/>",{"class":"ca_header"}).text(_l["label.band"]),
+		$("<div/>",{"class":"ca_header"}).text(_l["label.config"]),
+		$("<div/>",{"class":"ca_header"}).text(_l["label.bandwidth"]),
+		$("<div/>",{"class":"ca_header"}).text("Modulation"),
+		$("<div/>",{"class":"ca_header"}).text(_l["label.mimo"]),
+		$("<div/>",{"class":"ca_header"}).text(_l["label.options"])
+	);
 };
 
 var startPwaFunc = function(){
@@ -975,8 +1085,7 @@ var startPwaFunc = function(){
 };
 
 $(document).ready(function(){
-	setLang();
-	langPopup();
+	loadSettings();
 	readyUx();
 	addRow();
 	startPwaFunc();

@@ -19,11 +19,9 @@
 		<link rel="manifest" href="manifest.json">
 		<link rel="icon" href="4g-128.png" type="image/x-icon" sizes="128x128" />
 		<link rel="apple-touch-icon" href="4g-128.png" sizes="128x128" />
+		<link rel="stylesheet" href="style.css?TheOneWithTheSettings" type="text/css" media="all" />
 		
 		<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script><![endif]--><!--[if gte IE 9]><!--><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><!--<![endif]-->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"></script>
-		<script src="app.js?TheOneWithEARFCNSelector" type="text/javascript"></script>
-		<link rel="stylesheet" href="style.css?TheOneWithEARFCNSelector" type="text/css" media="all" />
 		
 	</head>
 	<body>
@@ -40,7 +38,7 @@
 	
 		<div id="title_bar">
 			<h1 id="page_title">Loading...</h1>
-			<span id="langsel">&#127760;</span>
+			<span id="open_settings">&#9881;</span>
 		</div>
 		<div id="main">
 			<div id="speeds"></div>
@@ -57,5 +55,9 @@
 			</div>
 			<div id="add_carrier"></div>
 		</div>
+		<div id="settings"></div>
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"></script>
+		<script src="app.js?TheOneWithTheSettings" type="text/javascript"></script>
 	</body>
 </html>
