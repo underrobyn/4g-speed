@@ -4,7 +4,7 @@ var version = 'v7:';
 var appName = "4gspeed"
 var appAssets = [
 	'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js',
-	'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js',
+	'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js',
 	'https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js',
 	
 	'/4g-speed/',
