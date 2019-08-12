@@ -296,6 +296,7 @@ var lteBandData = {
 	50:{"type":"TDD","frequency":"1500","range":["1432-1517"],"bandwidths":[3,5,10,15,20],"earfcn":[58240,59089]},
 	51:{"type":"TDD","frequency":"1500","range":["1427-1432"],"bandwidths":[3,5],"earfcn":[59090,59139]},
 	52:{"type":"TDD","frequency":"3300","range":["3300-3400"],"bandwidths":[5,10,15,20],"earfcn":[59140,60139]},
+	53:{"type":"TDD","frequency":"2500","range":["2483.35-2494.85"],"bandwidths":[1.4,3,5,10],"earfcn":[60140,60254]},
 	65:{"type":"FDD","frequency":"2100","range":["1920-2010","2110-2200"],"bandwidths":[1.4,3,5,10,15,20],"earfcn":[65536,66425]},
 	66:{"type":"FDD","frequency":"1700","range":["1710-1780","2110-2200"],"bandwidths":[1.4,3,5,10,15,20],"earfcn":[66436,67335]},
 	67:{"type":"SDL","frequency":"700","range":["738-758"],"bandwidths":[5,10,15,20],"earfcn":[67336,67535]},
