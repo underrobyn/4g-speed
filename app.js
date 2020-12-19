@@ -896,7 +896,8 @@ var populateSelectors = function(band,carrier){
 	$("#rowopt_ulmod"+carrier).empty().append(
 		$("<option/>",{"value":0}).text("QPSK"),
 		$("<option/>",{"value":1,"selected":"selected"}).text("16QAM"),
-		$("<option/>",{"value":2}).text("64QAM")
+		$("<option/>",{"value":2}).text("64QAM"),
+		$("<option/>",{"value":3}).text("256QAM")
 	);
 	
 	// Populate MiMo selector
